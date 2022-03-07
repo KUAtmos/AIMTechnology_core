@@ -5,9 +5,7 @@ Variables
 ;
 Positive Variables
     VS(R,I,L)               'stock capacity'
-    VSC(R,I,L,H)            'stock quantity by age group'
     VX(R,I,L)               'activity'
-    VXC(R,I,L,H)            'activity level by age group'
     VR(R,I,L)               'new installed capacity'
     VD(R,I,J)               'service supply'
     RES_OCC(R,I,L)          'slack variable for operating stock balance'
@@ -224,12 +222,8 @@ $if %nonCO2pricing%==on $include '%1/inc_prog/nonCO2FFIpricing.gms'
     eq_rtcmx_m(R,I,L,YEAR)$FL_IL(R,I,L)     =EQ_RTCMX.m(R,I,L); 
     tax_t(MQ,MG,YEAR)                       =emtax(MQ,MG);
 $if %ndc_cont%==on tax_2030$(v_year(YEAR) eq 2030)              =smax((MQ,MG),eq_gec_m(MQ,MG,YEAR)); 
-    vsw(R,I,L)$FL_IL(R,I,L)                                     =VS.l(R,I,L);
-    vswr(R,I,L)$FL_IL(R,I,L)                                    =VS.l(R,I,L)+VR.l(R,I,L);
-    a(R,I,L,J)$(FL_ILJ(R,I,L,J) and VS.l(R,I,L) and vswr(R,I,L))=(an(R,I,L,J)*vsw(R,I,L)+an(R,I,L,J)*VR.l(R,I,L))/vswr(R,I,L);
-    a(R,I,L,J)$(FL_ILJ(R,I,L,J) and VS.l(R,I,L) eq 0)           =an(R,I,L,J);
-    e(R,I,L,K)$(FL_ILK(R,I,L,K) and VS.l(R,I,L) and vswr(R,I,L))=(en(R,I,L,K)*vsw(R,I,L)+en(R,I,L,K)*VR.l(R,I,L))/vswr(R,I,L);
-    e(R,I,L,K)$(FL_ILK(R,I,L,K) and VS.l(R,I,L) eq 0)           =en(R,I,L,K);
+    vsw(R,I,L)$FL_IL(R,I,L)                                     =VS.l(R,I,L)-VR.l(R,I,L);
+    vswr(R,I,L)$FL_IL(R,I,L)                                    =VS.l(R,I,L);
     emax(ME,K)$K_EXRES(K)                                       =emax(ME,K)-sum((R,I)$(M_ME(R,I,ME) and FL_IK(R,I,K)),VE.l(R,I,K));
 );
 
