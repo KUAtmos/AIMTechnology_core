@@ -228,7 +228,7 @@ $if %ndc_cont%==on tax_2030$(v_year(YEAR) eq 2030)              =smax((MQ,MG),eq
 );
 
 * output scenario solution summary
-file out_stat /'%outputdir%/modelstat/%scen_name%.txt'/
+file out_stat /'%outputdir%/modelstat/summary/%scen_id%.txt'/
     put out_stat;
     if(year_inf eq %endyr%, 
         put '%scen_name%,Optimal,' year_inf:4:0 ',%scen_base%,%scen_cpol%,%scen_soceco%,%scen_techpol%,%scen_other%';

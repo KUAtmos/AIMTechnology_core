@@ -48,7 +48,7 @@ if [ "${run_parallel}" = "on" ]; then
         echo ...
         done
     fi
-cat ${out_dir}/modelstat/*.txt > ${out_dir}/modelstat/summary.csv
+cat ${out_dir}/modelstat/summary/*.txt > ${out_dir}/modelstat/summary.csv
 
 read -p "All processes finished."
 exit
