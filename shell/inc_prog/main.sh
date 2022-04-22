@@ -19,7 +19,7 @@ cd ../
 export prog_dir=$PWD
 export prog_dir_base=`basename $PWD`
 
-mkdirlist="exe/tmp/enduse_main exe/tmp/enduse_main/start exe/tmp/enduse_main/end exe/tmp/gms2iamc exe/tmp/gms2iamc/start exe/tmp/gms2iamc/end exe/tmp/inc"
+mkdirlist="exe/tmp/enduse_main exe/tmp/enduse_main/start exe/tmp/enduse_main/end exe/tmp/gms2iamc exe/tmp/gms2iamc/start exe/tmp/gms2iamc/end"
 for j in ${mkdirlist}; do
     mkdir -p ${j} 2>/dev/null
     rm -r ${j}/* 2>/dev/null
