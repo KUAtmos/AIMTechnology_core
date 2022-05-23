@@ -180,7 +180,7 @@ $batinclude %f_interp% scn  'R,I,L'   scn_t  'R,I,L'    'FL_IL(R,I,L)'
     xi_t1(R,I,L,K,YEAR)$FL_ILK(R,I,L,K)                                 =xi(R,I,L,K);
     scn_t1(R,I,L,YEAR)$FL_IL(R,I,L)                                     =scn(R,I,L);
     emtax(MQ,MG)                                                        =emtax_t(MQ,MG,YEAR);
-$if %ndc_cont%==on emtax('JPN','GHG_Kyoto_Gases')$(v_year(YEAR) gt 2030)=tax_2030;
+$if %ndc_cont%==on emtax('%gas_sector%','%gas_type%')$(v_year(YEAR) gt 2030)=tax_2030;
     qmax(MQ,MG)                                                         =qmax_t(MQ,MG,YEAR);
     emax(ME,K)$(K_EXRES(K) and ord(YEAR) eq 1)                          =emax_t(ME,K,'%startyr%');
     emax_t1(ME,K,YEAR)                                                  =emax(ME,K);
