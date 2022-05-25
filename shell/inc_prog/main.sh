@@ -11,7 +11,7 @@ main_parallel_run() {
     }
 
 # main program start ------------------------------------------
-gams_sys_dir=`which gams|xargs dirname`
+gams_sys_dir=`which gams --skip-alias|xargs dirname`
 echo AIM/Technology-${region}
 echo Scenario name: ${scenario}
 
