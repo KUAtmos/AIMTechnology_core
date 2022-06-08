@@ -132,6 +132,7 @@ xi(R,I,L,K)$FL_ILK(R,I,L,K)         =0;
 serv(R,I,J)$sum(L,FL_ILJ(R,I,L,J))  =0;
 sc(R,I,L,H)$FL_IL(R,I,L)            =0;
 tax_2030                            =0;
+cp_const                            =0;
 
 Loop(YEAR$(v_year(YEAR) le %endyr%),
 * assign parameters
@@ -181,6 +182,7 @@ $batinclude %f_interp% scn  'R,I,L'   scn_t  'R,I,L'    'FL_IL(R,I,L)'
     scn_t1(R,I,L,YEAR)$FL_IL(R,I,L)                                     =scn(R,I,L);
     emtax(MQ,MG)                                                        =emtax_t(MQ,MG,YEAR);
 $if %ndc_cont%==on emtax('%gas_sector%','%gas_type%')$(v_year(YEAR) gt 2030)=tax_2030;
+$if %keep_carpri%==on emtax('%gas_sector%','%gas_type%')$(v_year(YEAR) gt %cp_const_y%)=cp_const;
     qmax(MQ,MG)                                                         =qmax_t(MQ,MG,YEAR);
     emax(ME,K)$(K_EXRES(K) and ord(YEAR) eq 1)                          =emax_t(ME,K,'%startyr%');
     emax_t1(ME,K,YEAR)                                                  =emax(ME,K);
@@ -222,6 +224,7 @@ $if %nonCO2pricing%==on $include '%1/inc_prog/nonCO2FFIpricing.gms'
     eq_rtcmx_m(R,I,L,YEAR)$FL_IL(R,I,L)     =EQ_RTCMX.m(R,I,L); 
     tax_t(MQ,MG,YEAR)                       =emtax(MQ,MG);
 $if %ndc_cont%==on tax_2030$(v_year(YEAR) eq 2030)              =smax((MQ,MG),eq_gec_m(MQ,MG,YEAR)); 
+$if %keep_carpri%==on cp_const$(v_year(YEAR) eq %cp_const_y%)   =smax((MQ,MG),eq_gec_m(MQ,MG,YEAR)); 
     vsw(R,I,L)$FL_IL(R,I,L)                                     =VS.l(R,I,L)-VR.l(R,I,L);
     vswr(R,I,L)$FL_IL(R,I,L)                                    =VS.l(R,I,L);
     emax(ME,K)$K_EXRES(K)                                       =emax(ME,K)-sum((R,I)$(M_ME(R,I,ME) and FL_IK(R,I,K)),VE.l(R,I,K));
