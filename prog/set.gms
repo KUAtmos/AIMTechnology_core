@@ -13,6 +13,7 @@ Set
     MG                      'emission constraint group by gas'
     MQ                      'emission constraint group by sector-region'
     MR                      'region class for intermediate service balance'
+    ML                      'technology group for stock and flow balances'
     M_MR(R,I,MR)            'sector+region mapping for internal input-output balance'
     MR_INT(MR,INT)          'group of internal input-output balance'
     M_MG(M,MG)              'gas mapping'
@@ -20,6 +21,7 @@ Set
     M_ME(R,I,ME)            'energy supply constraint mapping'
     M_N(L,J,N)              'service sub-group mapping'
     M_O(L,J,O)              'technology mapping for service sub-groups'
+    M_ML(ML,L)              'technology group mapping'
     dummy2                  'dummy set for houly power generation' /1,2/
     MAXMIN                  /MAX,MIN/
     YEAR(H)                 'calculation period'

@@ -23,8 +23,8 @@ Equations
     EQ_SRCMN(R,I,L,J)       'min service share ratio constraint'
     EQ_STGMX(R,I,L,O)       'max service share constraint on technology in service sub-group'
     EQ_STGMN(R,I,L,O)       'min service share constraint on technology in service sub-group'
-    EQ_RTCMX(R,I,L)         'Max installed quantity constraints'
-    EQ_RTCMN(R,I,L)         'Min installed quantity constraints'
+    EQ_RTCMX(R,I,ML)        'Max installed quantity constraints'
+    EQ_RTCMN(R,I,ML)        'Min installed quantity constraints'
     EQ_STCMX(R,I,L)         'Max stock quantity constraints'
     EQ_STCMN(R,I,L)         'Min stock quantity constraints'
     EQ_SGCMX(R,I,N,J)       'Max sub-service group share constraints'
@@ -51,10 +51,10 @@ EQ_ESCMX(ME,K)$(emax(ME,K) ne inf)..
     emax(ME,K) =g= sum((R,I)$M_ME(R,I,ME),VE(R,I,K));
 EQ_ESCMN(ME,K)$emin(ME,K)..
     emin(ME,K) =l= sum((R,I)$M_ME(R,I,ME),VE(R,I,K));
-EQ_RTCMX(R,I,L)$tumx(R,I,L)..
-    tumx(R,I,L) =g= VR(R,I,L);
-EQ_RTCMN(R,I,L)$tumn(R,I,L)..
-    tumn(R,I,L) =l= VR(R,I,L);
+EQ_RTCMX(R,I,ML)$tumx(R,I,ML)..
+    tumx(R,I,ML) =g= sum(L$M_ML(ML,L),VR(R,I,L));
+EQ_RTCMN(R,I,ML)$tumn(R,I,ML)..
+    tumn(R,I,ML) =l= sum(L$M_ML(ML,L),VR(R,I,L));
 EQ_STCMX(R,I,L)$romx(R,I,L)..
     romx(R,I,L) =g= VS(R,I,L);
 EQ_STCMN(R,I,L)$romn(R,I,L)..
@@ -120,7 +120,7 @@ Parameter
     eq_occ_m(R,I,L,H)       'Marginal cost of device operation'
     eq_stk_m(R,I,L,H)       'Marginal cost of device stock'
     eq_gec_m(MQ,MG,H)       'Marginal cost of emission'
-    eq_rtcmx_m(R,I,L,H)     'Marginal cost of new installation'
+    eq_rtcmx_m(R,I,ML,H)    'Marginal cost of new installation'
     a_t(R,I,L,J,H)          'average output coefficient'
     e_t(R,I,L,K,H)          'average input coefficient'
     cn_t(R,I,L,H)           'annualized initial cost'
@@ -160,8 +160,8 @@ $batinclude %f_interp% scn  'R,I,L'   scn_t  'R,I,L'    'FL_IL(R,I,L)'
 
     serv(R,I,J)$(FL_IJ(R,I,J) and FL_NOTINT_J(J))                       =serv_t(R,I,J,YEAR);
     gam(R,I,L)$FL_IL(R,I,L)                                             =gam_t(R,I,L,YEAR);
-    tumx(R,I,L)$FL_IL(R,I,L)                                            =tumx_t(R,I,L,YEAR);
-    tumn(R,I,L)$FL_IL(R,I,L)                                            =tumn_t(R,I,L,YEAR);
+    tumx(R,I,ML)$sum(L$M_ML(ML,L),FL_IL(R,I,L))                         =tumx_t(R,I,ML,YEAR);
+    tumn(R,I,ML)$sum(L$M_ML(ML,L),FL_IL(R,I,L))                         =tumn_t(R,I,ML,YEAR);
     t_y                                                                 =v_year(YEAR);
     cn(R,I,L)$FL_IL(R,I,L)                                              =bn(R,I,L)*(1-scn(R,I,L))*alpha(R,I,L)*exp(tn(L)*log(1+alpha(R,I,L)))/(exp(tn(L)*log(1+alpha(R,I,L)))-1);
     cn_t(R,I,L,YEAR)$FL_IL(R,I,L)                                       =cn(R,I,L);
@@ -221,7 +221,7 @@ $if %nonCO2pricing%==on $include '%1/inc_prog/nonCO2FFIpricing.gms'
     eq_occ_m(R,I,L,YEAR)$FL_IL(R,I,L)       =EQ_OCC.m(R,I,L);
     eq_stk_m(R,I,L,YEAR)$FL_IL(R,I,L)       =EQ_STK.m(R,I,L);
     eq_gec_m(MQ,MG,YEAR)                    =EQ_GEC.m(MQ,MG);
-    eq_rtcmx_m(R,I,L,YEAR)$FL_IL(R,I,L)     =EQ_RTCMX.m(R,I,L); 
+    eq_rtcmx_m(R,I,ML,YEAR)$sum(M_ML(ML,L),FL_IL(R,I,L))        =EQ_RTCMX.m(R,I,ML); 
     tax_t(MQ,MG,YEAR)                       =emtax(MQ,MG);
 $if %ndc_cont%==on tax_2030$(v_year(YEAR) eq 2030)              =smax((MQ,MG),eq_gec_m(MQ,MG,YEAR)); 
 $if %keep_carpri%==on cp_const$(v_year(YEAR) eq %cp_const_y%)   =smax((MQ,MG),eq_gec_m(MQ,MG,YEAR)); 
