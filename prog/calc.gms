@@ -17,8 +17,8 @@ Equations
     EQ_SVC(R,I,J)           'service demand calculation'
     EQ_SDC(R,I,J)           'service demand balances'
     EQ_ENG(R,I,K)           'energy balances'
-    EQ_ESCMX(ME,K)          'max energy supply constraint'
-    EQ_ESCMN(ME,K)          'min energy supply constraint'
+    EQ_ESCMX(ME,MK)         'max energy supply constraint'
+    EQ_ESCMN(ME,MK)         'min energy supply constraint'
     EQ_SRCMX(R,I,L,J)       'max service share ratio constraint'
     EQ_SRCMN(R,I,L,J)       'min service share ratio constraint'
     EQ_STGMX(R,I,L,O)       'max service share constraint on technology in service sub-group'
@@ -47,10 +47,10 @@ EQ_SDC(R,I,J)$FL_NOTINT_J(J)..
 EQ_ENG(R,I,K)$FL_IK(R,I,K)..
     VE(R,I,K) =e= -sum(L,(1+xi(R,I,L,K))*e(R,I,L,K)*VX(R,I,L));
     VE.fx(R,I,K)$(not FL_IK(R,I,K))=0;
-EQ_ESCMX(ME,K)$(emax(ME,K) ne inf)..
-    emax(ME,K) =g= sum((R,I)$M_ME(R,I,ME),VE(R,I,K));
-EQ_ESCMN(ME,K)$emin(ME,K)..
-    emin(ME,K) =l= sum((R,I)$M_ME(R,I,ME),VE(R,I,K));
+EQ_ESCMX(ME,MK)$(emax(ME,MK) ne inf)..
+    emax(ME,MK) =g= sum((R,I)$M_ME(R,I,ME),sum(M_MK(MK,K),VE(R,I,K)));
+EQ_ESCMN(ME,MK)$emin(ME,MK)..
+    emin(ME,MK) =l= sum((R,I)$M_ME(R,I,ME),sum(M_MK(MK,K),VE(R,I,K)));
 EQ_RTCMX(R,I,ML)$tumx(R,I,ML)..
     tumx(R,I,ML) =g= sum(L$M_ML(ML,L),VR(R,I,L));
 EQ_RTCMN(R,I,ML)$tumn(R,I,ML)..
@@ -136,7 +136,7 @@ cp_const                            =0;
 
 Loop(YEAR$(v_year(YEAR) le %endyr%),
 * assign parameters
-$batinclude %f_interp% emax 'ME,K'    emax_t 'ME,K'     'not K_EXRES(K)'  
+$batinclude %f_interp% emax 'ME,MK'   emax_t 'ME,MK'    'not sum(M_MK(MK,K),K_EXRES(K))'  
 $batinclude %f_interp% an   'R,I,L,J' an_t   'R,I,L,J'  'FL_ILJ(R,I,L,J)'
 $batinclude %f_interp% en   'R,I,L,K' en_t   'R,I,L,K'  'FL_ILK(R,I,L,K)'
 $batinclude %f_interp% romx 'R,I,L'   romx_t 'R,I,L'    'FL_IL(R,I,L)'
@@ -147,7 +147,7 @@ $batinclude %f_interp% thmx 'R,I,L,J' thmx_t 'R,I,L,J'  'FL_ILJ(R,I,L,J)'
 $batinclude %f_interp% thmn 'R,I,L,J' thmn_t 'R,I,L,J'  'FL_ILJ(R,I,L,J)'
 $batinclude %f_interp% chmx 'R,I,L,O' chmx_t 'R,I,L,O'  'FL_ILO(R,I,L,O)'
 $batinclude %f_interp% chmn 'R,I,L,O' chmn_t 'R,I,L,O'  'FL_ILO(R,I,L,O)'
-$batinclude %f_interp% emin 'ME,K'    emin_t 'ME,K'     1  
+$batinclude %f_interp% emin 'ME,MK'   emin_t 'ME,MK'    1  
 $batinclude %f_interp% ommx 'R,I,N,J' ommx_t 'R,I,N,J'  'FL_INJ(R,I,N,J)'  
 $batinclude %f_interp% ommn 'R,I,N,J' ommn_t 'R,I,N,J'  'FL_INJ(R,I,N,J)'
 $batinclude %f_interp% sgmx 'R,I,J'   sgmx_t 'R,I,J'    'FL_IJ(R,I,J)'
@@ -184,9 +184,9 @@ $batinclude %f_interp% scn  'R,I,L'   scn_t  'R,I,L'    'FL_IL(R,I,L)'
 $if %ndc_cont%==on emtax('%gas_sector%','%gas_type%')$(v_year(YEAR) gt 2030)=tax_2030;
 $if %keep_carpri%==on emtax('%gas_sector%','%gas_type%')$(v_year(YEAR) gt %cp_const_y%)=cp_const;
     qmax(MQ,MG)                                                         =qmax_t(MQ,MG,YEAR);
-    emax(ME,K)$(K_EXRES(K) and ord(YEAR) eq 1)                          =emax_t(ME,K,'%startyr%');
-    emax_t1(ME,K,YEAR)                                                  =emax(ME,K);
-    emin_t1(ME,K,YEAR)                                                  =emin(ME,K);
+    emax(ME,MK)$(sum(M_MK(MK,K),K_EXRES(K)) and ord(YEAR) eq 1)         =emax_t(ME,MK,'%startyr%');
+    emax_t1(ME,MK,YEAR)                                                 =emax(ME,MK);
+    emin_t1(ME,MK,YEAR)                                                 =emin(ME,MK);
 
 * bound settings
     RES_END.up(MR,INT)$MR_INT(MR,INT)                                   =res_end_up(MR,INT,YEAR);
@@ -225,9 +225,9 @@ $if %nonCO2pricing%==on $include '%1/inc_prog/nonCO2FFIpricing.gms'
     tax_t(MQ,MG,YEAR)                       =emtax(MQ,MG);
 $if %ndc_cont%==on tax_2030$(v_year(YEAR) eq 2030)              =smax((MQ,MG),eq_gec_m(MQ,MG,YEAR)); 
 $if %keep_carpri%==on cp_const$(v_year(YEAR) eq %cp_const_y%)   =smax((MQ,MG),eq_gec_m(MQ,MG,YEAR)); 
-    vsw(R,I,L)$FL_IL(R,I,L)                                     =VS.l(R,I,L)-VR.l(R,I,L);
-    vswr(R,I,L)$FL_IL(R,I,L)                                    =VS.l(R,I,L);
-    emax(ME,K)$K_EXRES(K)                                       =emax(ME,K)-sum((R,I)$(M_ME(R,I,ME) and FL_IK(R,I,K)),VE.l(R,I,K));
+    vsw(R,I,L)$FL_IL(R,I,L)                 =VS.l(R,I,L)-VR.l(R,I,L);
+    vswr(R,I,L)$FL_IL(R,I,L)                =VS.l(R,I,L);
+    emax(ME,MK)$sum(M_MK(MK,K),K_EXRES(K))  =emax(ME,MK)-sum(M_MK(MK,K),sum((R,I)$(M_ME(R,I,ME) and FL_IK(R,I,K)),VE.l(R,I,K)));
 );
 
 * output scenario solution summary
