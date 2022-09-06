@@ -6,7 +6,7 @@ $if %scen_id%==1000C        $setglobal scen_cpol 1000C
 
 $setglobal startyr  2005
 $setglobal endyr    2010
-
+$setglobal interval5    off
 $setglobal ndc_cont     off
 
 $setglobal scen_soceco NA

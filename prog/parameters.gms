@@ -87,4 +87,5 @@ Scalar
     tax_2030            'emission tax in 2030 for NDC continuation scenario'
     cp_const            'emission tax for keeping carbon price level'
     t_y                 'simulation year'
+    t_int               'time interval'
 ;

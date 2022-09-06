@@ -65,7 +65,7 @@ EQ_SRCMN(R,I,L,J)$thmn(R,I,L,J)..
     thmn(R,I,L,J)*VD(R,I,J)  =l= (1+phi(R,I,L,J))*a(R,I,L,J)*VX(R,I,L);
 EQ_STGMX(R,I,L,O)$chmx(R,I,L,O)..
     chmx(R,I,L,O)*sum((L1,J)$(M_O(L,J,O) and FL_ILJ(R,I,L1,J)),(1+phi(R,I,L1,J))*a(R,I,L1,J)*VX(R,I,L1)) =g= sum(J$(M_O(L,J,O) and FL_ILJ(R,I,L,J)),(1+phi(R,I,L,J))*a(R,I,L,J)*VX(R,I,L));
-EQ_STGMN(R,I,L,O)$(chmx(R,I,L,O) gt 0)..
+EQ_STGMN(R,I,L,O)$(chmn(R,I,L,O) gt 0)..
     chmn(R,I,L,O)*sum((L1,J)$(M_O(L,J,O) and FL_ILJ(R,I,L1,J)),(1+phi(R,I,L1,J))*a(R,I,L1,J)*VX(R,I,L1)) =l= sum(J$(M_O(L,J,O) and FL_ILJ(R,I,L,J)),(1+phi(R,I,L,J))*a(R,I,L,J)*VX(R,I,L));
 EQ_SGCMX(R,I,N,J)$ommx(R,I,N,J)..
     ommx(R,I,N,J)*VD(R,I,J)  =g= sum((L,J1)$(FL_IL(R,I,L) and M_N(L,J1,N)),(1+phi(R,I,L,J1))*a(R,I,L,J1)*VX(R,I,L));
@@ -80,7 +80,7 @@ EQ_END(MR,INT)$MR_INT(MR,INT)..
 EQ_OCC(R,I,L)$FL_IL(R,I,L)..
     VX(R,I,L) =e= (1+gam(R,I,L))*(VS(R,I,L)-RES_OCC(R,I,L));
 EQ_STK(R,I,L)$FL_IL(R,I,L)..
-    VS(R,I,L) =e= sum(H$(v_year(H) le t_y and v_year(H) ge t_y-tn(L)),ssc(R,I,L,H))+VR(R,I,L);
+    VS(R,I,L) =e= sum(H$(v_year(H) le t_y and v_year(H) ge t_y-tn(L)),ssc(R,I,L,H))+VR(R,I,L)*t_int;
 EQ_EMISS(R,I,M)..
     VQ(R,I,M) =e= sum(K$FL_IK(R,I,K),gas(R,I,K,M)*VE(R,I,K));
 EQ_GEC(MQ,MG)$(qmax(MQ,MG) ne inf)..
@@ -163,7 +163,9 @@ $batinclude %f_interp% scn  'R,I,L'   scn_t  'R,I,L'    'FL_IL(R,I,L)'
     tumx(R,I,ML)$sum(L$M_ML(ML,L),FL_IL(R,I,L))                         =tumx_t(R,I,ML,YEAR);
     tumn(R,I,ML)$sum(L$M_ML(ML,L),FL_IL(R,I,L))                         =tumn_t(R,I,ML,YEAR);
     t_y                                                                 =v_year(YEAR);
-    cn(R,I,L)$FL_IL(R,I,L)                                              =bn(R,I,L)*(1-scn(R,I,L))*alpha(R,I,L)*exp(tn(L)*log(1+alpha(R,I,L)))/(exp(tn(L)*log(1+alpha(R,I,L)))-1);
+    t_int                                                               =1;
+$if %interval5%==on t_int                                               =1+4$(v_year(YEAR) gt 2050);
+    cn(R,I,L)$FL_IL(R,I,L)                                              =bn(R,I,L)*(1-scn(R,I,L))*alpha(R,I,L)*exp(tn(L)*log(1+alpha(R,I,L)))/(exp(tn(L)*log(1+alpha(R,I,L)))-1)*t_int;
     cn_t(R,I,L,YEAR)$FL_IL(R,I,L)                                       =cn(R,I,L);
     a(R,I,L,J)$(ord(YEAR) eq 1 and FL_ILJ(R,I,L,J))                     =an(R,I,L,J);
     e(R,I,L,K)$(ord(YEAR) eq 1 and FL_ILK(R,I,L,K))                     =en(R,I,L,K);
@@ -205,12 +207,13 @@ $if %nonCO2pricing%==on $include '%1/inc_prog/nonCO2FFIpricing.gms'
 
 * output parameters
     sc(R,I,L,H)$FL_IL(R,I,L)                =ssc(R,I,L,H);
-    sc(R,I,L,YEAR)$FL_IL(R,I,L)             =VR.L(R,I,L)+ssc(R,I,L,YEAR)$(ord(YEAR) eq 1);
-    ve_l(R,I,K,YEAR)$FL_IK(R,I,K)           =VE.l(R,I,K);         
+    sc(R,I,L,YEAR)$FL_IL(R,I,L)             =VR.l(R,I,L)+ssc(R,I,L,YEAR)$(ord(YEAR) eq 1);
+$if %interval5%==on sc(R,I,L,H)$(FL_IL(R,I,L) and v_year(YEAR) gt 2050 and v_year(H) le v_year(YEAR) and v_year(H) gt v_year(YEAR)-5)=VR.l(R,I,L);
+    ve_l(R,I,K,YEAR)$FL_IK(R,I,K)           =VE.l(R,I,K);
     vq_l(R,I,M,YEAR)                        =VQ.l(R,I,M);
     vs_l(R,I,L,YEAR)$FL_IL(R,I,L)           =VS.l(R,I,L);
     vx_l(R,I,L,YEAR)$FL_IL(R,I,L)           =VX.l(R,I,L);
-    vr_l(R,I,L,YEAR)$FL_IL(R,I,L)           =VR.l(R,I,L);        
+    vr_l(R,I,L,YEAR)$FL_IL(R,I,L)           =VR.l(R,I,L);
     vserv_l(R,I,J,YEAR)$FL_IJ(R,I,J)        =VD.l(R,I,J);
     res_occ_l(R,I,L,YEAR)$FL_IL(R,I,L)      =RES_OCC.l(R,I,L);
     res_end_l(MR,INT,YEAR)$MR_INT(MR,INT)   =RES_END.l(MR,INT);
@@ -227,7 +230,7 @@ $if %ndc_cont%==on tax_2030$(v_year(YEAR) eq 2030)              =smax((MQ,MG),eq
 $if %keep_carpri%==on cp_const$(v_year(YEAR) eq %cp_const_y%)   =smax((MQ,MG),eq_gec_m(MQ,MG,YEAR)); 
     vsw(R,I,L)$FL_IL(R,I,L)                 =VS.l(R,I,L)-VR.l(R,I,L);
     vswr(R,I,L)$FL_IL(R,I,L)                =VS.l(R,I,L);
-    emax(ME,MK)$sum(M_MK(MK,K),K_EXRES(K))  =emax(ME,MK)-sum(M_MK(MK,K),sum((R,I)$(M_ME(R,I,ME) and FL_IK(R,I,K)),VE.l(R,I,K)));
+    emax(ME,MK)$sum(M_MK(MK,K),K_EXRES(K))  =max(0,emax(ME,MK)-sum(M_MK(MK,K),sum((R,I)$(M_ME(R,I,ME) and FL_IK(R,I,K)),VE.l(R,I,K)))*t_int);
 );
 
 * output scenario solution summary
