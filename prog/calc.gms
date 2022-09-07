@@ -64,9 +64,9 @@ EQ_SRCMX(R,I,L,J)$thmx(R,I,L,J)..
 EQ_SRCMN(R,I,L,J)$thmn(R,I,L,J)..
     thmn(R,I,L,J)*VD(R,I,J)  =l= (1+phi(R,I,L,J))*a(R,I,L,J)*VX(R,I,L);
 EQ_STGMX(R,I,L,O)$chmx(R,I,L,O)..
-    chmx(R,I,L,O)*sum((L1,J)$(M_O(L,J,O) and FL_ILJ(R,I,L1,J)),(1+phi(R,I,L1,J))*a(R,I,L1,J)*VX(R,I,L1)) =g= sum(J$(M_O(L,J,O) and FL_ILJ(R,I,L,J)),(1+phi(R,I,L,J))*a(R,I,L,J)*VX(R,I,L));
+    chmx(R,I,L,O)*sum((L1,J)$(M_O(L1,J,O) and FL_ILJ(R,I,L1,J)),(1+phi(R,I,L1,J))*a(R,I,L1,J)*VX(R,I,L1)) =g= sum(J$(M_O(L,J,O) and FL_ILJ(R,I,L,J)),(1+phi(R,I,L,J))*a(R,I,L,J)*VX(R,I,L));
 EQ_STGMN(R,I,L,O)$(chmn(R,I,L,O) gt 0)..
-    chmn(R,I,L,O)*sum((L1,J)$(M_O(L,J,O) and FL_ILJ(R,I,L1,J)),(1+phi(R,I,L1,J))*a(R,I,L1,J)*VX(R,I,L1)) =l= sum(J$(M_O(L,J,O) and FL_ILJ(R,I,L,J)),(1+phi(R,I,L,J))*a(R,I,L,J)*VX(R,I,L));
+    chmn(R,I,L,O)*sum((L1,J)$(M_O(L1,J,O) and FL_ILJ(R,I,L1,J)),(1+phi(R,I,L1,J))*a(R,I,L1,J)*VX(R,I,L1)) =l= sum(J$(M_O(L,J,O) and FL_ILJ(R,I,L,J)),(1+phi(R,I,L,J))*a(R,I,L,J)*VX(R,I,L));
 EQ_SGCMX(R,I,N,J)$ommx(R,I,N,J)..
     ommx(R,I,N,J)*VD(R,I,J)  =g= sum((L,J1)$(FL_IL(R,I,L) and M_N(L,J1,N)),(1+phi(R,I,L,J1))*a(R,I,L,J1)*VX(R,I,L));
 EQ_SGCMN(R,I,N,J)$(ommn(R,I,N,J) gt 0)..
@@ -136,7 +136,7 @@ cp_const                            =0;
 
 Loop(YEAR$(v_year(YEAR) le %endyr%),
 * assign parameters
-$batinclude %f_interp% emax 'ME,MK'   emax_t 'ME,MK'    'not sum(M_MK(MK,K),K_EXRES(K))'  
+$batinclude %f_interp% emax 'ME,MK'   emax_t 'ME,MK'    'not K_EXRES(MK)'  
 $batinclude %f_interp% an   'R,I,L,J' an_t   'R,I,L,J'  'FL_ILJ(R,I,L,J)'
 $batinclude %f_interp% en   'R,I,L,K' en_t   'R,I,L,K'  'FL_ILK(R,I,L,K)'
 $batinclude %f_interp% romx 'R,I,L'   romx_t 'R,I,L'    'FL_IL(R,I,L)'
@@ -166,7 +166,7 @@ $batinclude %f_interp% scn  'R,I,L'   scn_t  'R,I,L'    'FL_IL(R,I,L)'
     t_int                                                               =1;
 $if %interval5%==on t_int                                               =1+4$(v_year(YEAR) gt 2050);
     cn(R,I,L)$FL_IL(R,I,L)                                              =bn(R,I,L)*(1-scn(R,I,L))*alpha(R,I,L)*exp(tn(L)*log(1+alpha(R,I,L)))/(exp(tn(L)*log(1+alpha(R,I,L)))-1)*t_int;
-    cn_t(R,I,L,YEAR)$FL_IL(R,I,L)                                       =cn(R,I,L);
+    cn_t(R,I,L,YEAR)$FL_IL(R,I,L)                                       =cn(R,I,L)/t_int;
     a(R,I,L,J)$(ord(YEAR) eq 1 and FL_ILJ(R,I,L,J))                     =an(R,I,L,J);
     e(R,I,L,K)$(ord(YEAR) eq 1 and FL_ILK(R,I,L,K))                     =en(R,I,L,K);
     age(H)$(v_year(YEAR) gt v_year(H))                                  =v_year(YEAR)-v_year(H);
@@ -186,7 +186,8 @@ $if %interval5%==on t_int                                               =1+4$(v_
 $if %ndc_cont%==on emtax('%gas_sector%','%gas_type%')$(v_year(YEAR) gt 2030)=tax_2030;
 $if %keep_carpri%==on emtax('%gas_sector%','%gas_type%')$(v_year(YEAR) gt %cp_const_y%)=cp_const;
     qmax(MQ,MG)                                                         =qmax_t(MQ,MG,YEAR);
-    emax(ME,MK)$(sum(M_MK(MK,K),K_EXRES(K)) and ord(YEAR) eq 1)         =emax_t(ME,MK,'%startyr%');
+    emax_ex(ME,MK)$(K_EXRES(MK) and ord(YEAR) eq 1)                     =emax_t(ME,MK,'%startyr%');
+    emax(ME,MK)$(K_EXRES(MK) and ord(YEAR) eq 1)                        =emax_t(ME,MK,'%startyr%');
     emax_t1(ME,MK,YEAR)                                                 =emax(ME,MK);
     emin_t1(ME,MK,YEAR)                                                 =emin(ME,MK);
 
@@ -226,11 +227,13 @@ $if %interval5%==on sc(R,I,L,H)$(FL_IL(R,I,L) and v_year(YEAR) gt 2050 and v_yea
     eq_gec_m(MQ,MG,YEAR)                    =EQ_GEC.m(MQ,MG);
     eq_rtcmx_m(R,I,ML,YEAR)$sum(M_ML(ML,L),FL_IL(R,I,L))        =EQ_RTCMX.m(R,I,ML); 
     tax_t(MQ,MG,YEAR)                       =emtax(MQ,MG);
+    t_int_t(YEAR)                           =t_int;
 $if %ndc_cont%==on tax_2030$(v_year(YEAR) eq 2030)              =smax((MQ,MG),eq_gec_m(MQ,MG,YEAR)); 
 $if %keep_carpri%==on cp_const$(v_year(YEAR) eq %cp_const_y%)   =smax((MQ,MG),eq_gec_m(MQ,MG,YEAR)); 
-    vsw(R,I,L)$FL_IL(R,I,L)                 =VS.l(R,I,L)-VR.l(R,I,L);
+    vsw(R,I,L)$FL_IL(R,I,L)                 =VS.l(R,I,L)-VR.l(R,I,L)*t_int;
     vswr(R,I,L)$FL_IL(R,I,L)                =VS.l(R,I,L);
-    emax(ME,MK)$sum(M_MK(MK,K),K_EXRES(K))  =max(0,emax(ME,MK)-sum(M_MK(MK,K),sum((R,I)$(M_ME(R,I,ME) and FL_IK(R,I,K)),VE.l(R,I,K)))*t_int);
+    emax_ex(ME,MK)$K_EXRES(MK)              =max(0,emax_ex(ME,MK)-sum(M_MK(MK,K),sum((R,I)$(M_ME(R,I,ME) and FL_IK(R,I,K)),VE.l(R,I,K)))*t_int);
+    emax(ME,MK)$K_EXRES(MK)                 =emax_ex(ME,MK)/t_int;
 );
 
 * output scenario solution summary
