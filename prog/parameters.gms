@@ -69,6 +69,7 @@ Parameters
     scn_t(R,I,L,H)      'subsidy rate for initial cost'
     res_end_up(MR,INT,H)'upper bound of slack variable for input output balance'
     CO2FFIprice(H)      'Marginal abatement cost of CO2-FFI to impose equivalent prices on non-CO2'
+    emax_ex(ME,MK)      'available exhaustible resources'
 
 * output parameters
     ge_t1(R,I,K,H)      'energy price(USD per GJ)'
@@ -81,10 +82,12 @@ Parameters
     emax_t1(ME,MK,H)    'maximum energy supply'
     emin_t1(ME,MK,H)    'minimum energy supply'
     ind_t(MQ,*,H)       'indicators not used for calculation'
+    t_int_t(H)          'time interval'
 ;
 Scalar
     year_inf            'year of infeasibility'
     tax_2030            'emission tax in 2030 for NDC continuation scenario'
     cp_const            'emission tax for keeping carbon price level'
     t_y                 'simulation year'
+    t_int               'time interval'
 ;

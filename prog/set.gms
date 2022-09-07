@@ -28,7 +28,7 @@ Set
     MAXMIN                  /MAX,MIN/
     YEAR(H)                 'calculation period'
     Y5(H)                   'Year by 5-year step'
-    K_EXRES(K)              'exhaustible resources'
+    K_EXRES(MK)             'exhaustible resources'
     ELE_CAP_VRE(L)          'VRE capacity'
     FL_IL(R,I,L)
     FL_ILJ(R,I,L,J)
