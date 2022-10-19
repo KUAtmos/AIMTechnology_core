@@ -134,7 +134,9 @@ sc(R,I,L,H)$FL_IL(R,I,L)            =0;
 tax_2030                            =0;
 cp_const                            =0;
 
+
 Loop(YEAR$(v_year(YEAR) le %endyr%),
+
 * assign parameters
 $batinclude %f_interp% emax 'ME,MK'   emax_t 'ME,MK'    'not K_EXRES(MK)'  
 $batinclude %f_interp% an   'R,I,L,J' an_t   'R,I,L,J'  'FL_ILJ(R,I,L,J)'
@@ -160,8 +162,6 @@ $batinclude %f_interp% scn  'R,I,L'   scn_t  'R,I,L'    'FL_IL(R,I,L)'
 
     serv(R,I,J)$(FL_IJ(R,I,J) and FL_NOTINT_J(J))                       =serv_t(R,I,J,YEAR);
     gam(R,I,L)$FL_IL(R,I,L)                                             =gam_t(R,I,L,YEAR);
-    tumx(R,I,ML)$sum(L$M_ML(ML,L),FL_IL(R,I,L))                         =tumx_t(R,I,ML,YEAR);
-    tumn(R,I,ML)$sum(L$M_ML(ML,L),FL_IL(R,I,L))                         =tumn_t(R,I,ML,YEAR);
     t_y                                                                 =v_year(YEAR);
     t_int                                                               =1;
 $if %interval5%==on t_int                                               =1+4$(v_year(YEAR) gt 2050);
@@ -169,10 +169,22 @@ $if %interval5%==on t_int                                               =1+4$(v_
     cn_t(R,I,L,YEAR)$FL_IL(R,I,L)                                       =cn(R,I,L)/t_int;
     a(R,I,L,J)$(ord(YEAR) eq 1 and FL_ILJ(R,I,L,J))                     =an(R,I,L,J);
     e(R,I,L,K)$(ord(YEAR) eq 1 and FL_ILK(R,I,L,K))                     =en(R,I,L,K);
+
+* update cohort information
     age(H)$(v_year(YEAR) gt v_year(H))                                  =v_year(YEAR)-v_year(H);
-    ssc(R,I,L,H)$((ord(YEAR) eq 1) and FL_IL(R,I,L))                    =sc_base(R,I,L,H);
-    ssc(R,I,L,H)$((ord(YEAR) gt 1) and FL_IL(R,I,L))                    =sc(R,I,L,H);
-    ssc(R,I,L,H)$((ord(YEAR) gt 1) and FL_IL(R,I,L) and age(H) ge tn(L))=0;
+    ssc(R,I,L,H)$(ord(YEAR) eq 1 and FL_IL(R,I,L))                      =sc_base(R,I,L,H);
+    ssc(R,I,L,H)$(ord(YEAR) gt 1 and FL_IL(R,I,L))                      =sc(R,I,L,H);
+    ssc(R,I,L,H)$(ord(YEAR) gt 1 and FL_IL(R,I,L) and age(H) ge tn(L))  =0;
+
+* update maximum installation capacity where maximum stock capacity decreases during the calculation period
+    essc(R,I,L_CAPDEC,YEAR1)$(FL_IL(R,I,L_CAPDEC) and v_year(YEAR1) ge v_year(YEAR))=sum(H$(v_year(YEAR1)-v_year(H) le tn(L_CAPDEC)),ssc(R,I,L_CAPDEC,H));
+    tumx_dec(R,I,L_CAPDEC)$FL_IL(R,I,L_CAPDEC)                                      =smin(YEAR1$(v_year(YEAR1) gt v_year(YEAR) and v_year(YEAR1) le v_year(YEAR)+tn(L_CAPDEC)),romx_t(R,I,L_CAPDEC,YEAR1)-essc(R,I,L_CAPDEC,YEAR1));
+    tumx_dec(R,I,L_CAPDEC)$(FL_IL(R,I,L_CAPDEC) and tumx_dec(R,I,L_CAPDEC) le 0)    =eps;
+
+    tumx(R,I,ML)$sum(L$M_ML(ML,L),FL_IL(R,I,L))                         =tumx_t(R,I,ML,YEAR);
+    tumx(R,I,ML)$sum(L_CAPDEC$M_ML(ML,L_CAPDEC),FL_IL(R,I,L_CAPDEC) and tumx_dec(R,I,L_CAPDEC)) =sum(L_CAPDEC$M_ML(ML,L_CAPDEC),tumx_dec(R,I,L_CAPDEC));
+    tumn(R,I,ML)$sum(L$M_ML(ML,L),FL_IL(R,I,L))                         =tumn_t(R,I,ML,YEAR);
+
     a_t(R,I,L,J,YEAR)$FL_ILJ(R,I,L,J)                                   =a(R,I,L,J);
     e_t(R,I,L,K,YEAR)$FL_ILK(R,I,L,K)                                   =e(R,I,L,K);
     ge_t1(R,I,K,YEAR)$FL_IK(R,I,K)                                      =ge(R,I,K);
@@ -192,6 +204,7 @@ $if %keep_carpri%==on emtax('%gas_sector%','%gas_type%')$(v_year(YEAR) gt %cp_co
     emin_t1(ME,MK,YEAR)                                                 =emin(ME,MK);
 
 * bound settings
+
     RES_END.up(MR,INT)$MR_INT(MR,INT)                                   =res_end_up(MR,INT,YEAR);
     RES_OCC.fx(R,'ELE',ELE_CAP_VRE)                                     =0;
 $if %reg_mode%==GLOBAL  VE.lo(R,I,K)$FL_IK(R,I,K)                       =0;
@@ -199,14 +212,18 @@ $if %reg_mode%==JPN     VE.lo(R,I,K)$FL_NOTINT_K(K)                     =0;
 $if %reg_mode%==JPN     VE.lo(R,'CCS','T_OIL')                          =-inf;
     VE.lo(R,'H_H','CCUM0')                                              =-inf;
 
+
 * optimization
+
     Enduse.holdfixed    =1;
     Solve Enduse minimizing VTC using LP;
     Break$(Enduse.modelstat>2);
     year_inf=v_year(YEAR);
 $if %nonCO2pricing%==on $include '%1/inc_prog/nonCO2FFIpricing.gms'
 
+
 * output parameters
+
     sc(R,I,L,H)$FL_IL(R,I,L)                =ssc(R,I,L,H);
     sc(R,I,L,YEAR)$FL_IL(R,I,L)             =VR.l(R,I,L)+ssc(R,I,L,YEAR)$(ord(YEAR) eq 1);
 $if %interval5%==on sc(R,I,L,H)$(FL_IL(R,I,L) and v_year(YEAR) gt 2050 and v_year(H) le v_year(YEAR) and v_year(H) gt v_year(YEAR)-5)=VR.l(R,I,L);
@@ -232,11 +249,16 @@ $if %ndc_cont%==on tax_2030$(v_year(YEAR) eq 2030)              =smax((MQ,MG),eq
 $if %keep_carpri%==on cp_const$(v_year(YEAR) eq %cp_const_y%)   =smax((MQ,MG),eq_gec_m(MQ,MG,YEAR)); 
     vsw(R,I,L)$FL_IL(R,I,L)                 =VS.l(R,I,L)-VR.l(R,I,L)*t_int;
     vswr(R,I,L)$FL_IL(R,I,L)                =VS.l(R,I,L);
+
+* update exhaustible resources potential
     emax_ex(ME,MK)$K_EXRES(MK)              =max(0,emax_ex(ME,MK)-sum(M_MK(MK,K),sum((R,I)$(M_ME(R,I,ME) and FL_IK(R,I,K)),VE.l(R,I,K)))*t_int);
     emax(ME,MK)$K_EXRES(MK)                 =emax_ex(ME,MK)/t_int;
+
 );
 
+
 * output scenario solution summary
+
 file out_stat /'%outputdir%/modelstat/summary/%scen_id%.txt'/
     put out_stat;
     if(year_inf eq %endyr%, 
@@ -245,7 +267,9 @@ file out_stat /'%outputdir%/modelstat/summary/%scen_id%.txt'/
         );
     putclose out_stat;
 
+
 * output primary result file
+
 execute_unload '%outputdir%/gams_output/gdx_primary/%scen_name%.gdx'
 $include '%prog_dir%/inc_prog/gdxoutparam.gms'
 ;

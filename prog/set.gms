@@ -29,6 +29,7 @@ Set
     YEAR(H)                 'calculation period'
     Y5(H)                   'Year by 5-year step'
     K_EXRES(MK)             'exhaustible resources'
+    L_CAPDEC(L)             'devices, maximum capacity decreases during lifetime'
     ELE_CAP_VRE(L)          'VRE capacity'
     FL_IL(R,I,L)
     FL_ILJ(R,I,L,J)

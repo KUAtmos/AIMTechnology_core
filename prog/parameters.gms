@@ -70,7 +70,9 @@ Parameters
     res_end_up(MR,INT,H)'upper bound of slack variable for input output balance'
     CO2FFIprice(H)      'Marginal abatement cost of CO2-FFI to impose equivalent prices on non-CO2'
     emax_ex(ME,MK)      'available exhaustible resources'
-
+    essc(R,I,L,H)       'expected stock quantity remaining in year H'
+    tumx_dec(R,I,L)     'upper limit of new installation for device whose stock capacity decreases'
+ 
 * output parameters
     ge_t1(R,I,K,H)      'energy price(USD per GJ)'
     gas_t1(R,I,K,M,H)   'emission factor (kg-CO2 per MJ)'
