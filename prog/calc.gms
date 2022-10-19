@@ -178,7 +178,7 @@ $if %interval5%==on t_int                                               =1+4$(v_
 
 * update maximum installation capacity where maximum stock capacity decreases during the calculation period
     essc(R,I,L_CAPDEC,YEAR1)$(FL_IL(R,I,L_CAPDEC) and v_year(YEAR1) ge v_year(YEAR))=sum(H$(v_year(YEAR1)-v_year(H) le tn(L_CAPDEC)),ssc(R,I,L_CAPDEC,H));
-    tumx_dec(R,I,L_CAPDEC)$FL_IL(R,I,L_CAPDEC)                                      =smin(YEAR1$(v_year(YEAR1) gt v_year(YEAR) and v_year(YEAR1) le v_year(YEAR)+tn(L_CAPDEC)),romx_t(R,I,L_CAPDEC,YEAR1)-essc(R,I,L_CAPDEC,YEAR1));
+    tumx_dec(R,I,L_CAPDEC)$FL_IL(R,I,L_CAPDEC)                                      =smin(YEAR1$(v_year(YEAR1) gt v_year(YEAR) and v_year(YEAR1) le v_year(YEAR)+tn(L_CAPDEC)),romx_t(R,I,L_CAPDEC,YEAR1)-essc(R,I,L_CAPDEC,YEAR1))/t_int;
     tumx_dec(R,I,L_CAPDEC)$(FL_IL(R,I,L_CAPDEC) and tumx_dec(R,I,L_CAPDEC) le 0)    =eps;
 
     tumx(R,I,ML)$sum(L$M_ML(ML,L),FL_IL(R,I,L))                         =tumx_t(R,I,ML,YEAR);
