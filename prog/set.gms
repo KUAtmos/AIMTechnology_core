@@ -45,5 +45,5 @@ Set
     FL_DMPG(R,I,L,J,L,J)
     FL_DMPG2(R,I,L,J)
 ;
-Alias (I,I1),(J,J1),(L,L1),(YEAR,YEAR1,YEAR2),(H,H2),(R,R2,R3)
+Alias (I,I1),(J,J1),(L,L1),(YEAR,YEAR1,YEAR2),(H,H2),(R,R2,R3),(MR,MR2)
 ;
