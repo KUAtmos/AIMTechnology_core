@@ -74,6 +74,16 @@ Parameters
     emax_ex_y_load(ME,MK) 'available exhaustible resources'
     essc(R,I,L,H)       'expected stock quantity remaining in year H'
     tumx_dec(R,I,L)     'upper limit of new installation for device whose stock capacity decreases'
+    ve_p(R,I,K)
+    vq_p(R,I,M)
+    vs_p(R,I,L)
+    vx_p(R,I,L)
+    vr_p(R,I,L)
+    vserv_p(R,I,J)
+    res_occ_p(R,I,L)
+    res_end_p(MR,INT)
+    res_serv_p(R,I,J)
+    dvpg_p(R,I,L,J,dummy2)
 
     ind_t(MQ,*,H)       'indicators not used for calculation'
 ;

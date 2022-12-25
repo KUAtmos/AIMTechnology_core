@@ -114,6 +114,7 @@ Parameter
     res_och_l(R,I,L,H)  'slack variable for operating stock balance by age group'
     res_end_l(MR,INT)   'slack variable for input output balance'
     res_serv_l(R,I,J)   'slack variable for service demand'
+    dvpg_l(R,I,L,J,dummy2) 'dummy variable for hourly power generation change'
     ssc_unload(R,I,L,H) 'stock with ages time series'
     eq_eng_m(R,I,K)     'Marginal cost of energy'
     eq_svc_m(R,I,J)     'Marginal cost of service'
@@ -197,6 +198,17 @@ $if %reg_mode%==JPN     VE.lo(R,I,K)$FL_NOTINT_K(K)             =0;
 $if %reg_mode%==JPN     VE.lo(R,'CCS','T_OIL')                  =-inf;
 VE.lo(R,'H_H','CCUM0')                                          =-inf;
 
+* assign initial values
+VE.l(R,I,K)$FL_IK(R,I,K)                =ve_p(R,I,K);
+VQ.l(R,I,M)                             =vq_p(R,I,M);
+VS.l(R,I,L)$FL_IL(R,I,L)                =vs_p(R,I,L);
+VX.l(R,I,L)$FL_IL(R,I,L)                =vx_p(R,I,L);
+VR.l(R,I,L)$FL_IL(R,I,L)                =vr_p(R,I,L);
+VD.l(R,I,J)$FL_IJ(R,I,J)                =vserv_p(R,I,J);
+RES_OCC.l(R,I,L)$FL_IL(R,I,L)           =res_occ_p(R,I,L);
+RES_END.l(MR,INT)$MR_INT(MR,INT)        =res_end_p(MR,INT);
+RES_SERV.l(R,I,J)$FL_IJ(R,I,J)          =res_serv_p(R,I,J);
+DVPG.l(R,I,L,J,dummy2)$FL_ILJ(R,I,L,J)  =dvpg_p(R,I,L,J,dummy2);
 
 * optimization
 
@@ -222,6 +234,7 @@ vserv_l(R,I,J)$FL_IJ(R,I,J)         =VD.l(R,I,J);
 res_occ_l(R,I,L)$FL_IL(R,I,L)       =RES_OCC.l(R,I,L);
 res_end_l(MR,INT)$MR_INT(MR,INT)    =RES_END.l(MR,INT);
 res_serv_l(R,I,J)$FL_IJ(R,I,J)      =RES_SERV.l(R,I,J);
+dvpg_l(R,I,L,J,dummy2)$FL_ILJ(R,I,L,J)=DVPG.l(R,I,L,J,dummy2);
 ssc_unload(R,I,L,H)$(FL_IL(R,I,L) and v_year(H) le %calc_year%) $=ssc(R,I,L,H);
 eq_eng_m(R,I,K)$FL_IK(R,I,K)        =EQ_ENG.m(R,I,K);
 eq_svc_m(R,I,J)$FL_IJ(R,I,J)        =EQ_SVC.m(R,I,J);

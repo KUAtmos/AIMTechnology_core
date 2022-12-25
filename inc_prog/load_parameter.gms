@@ -10,10 +10,21 @@ $ifthen.load_prevyr %calc_year%==%start_year%
 sc_load(R,I,L,H)$FL_IL(R,I,L)=0;
 emax_ex_load(ME,MK)$K_EXRES(MK)=0;
 emax_ex_y_load(ME,MK)$K_EXRES(MK)=0;
+ve_p(R,I,K)$FL_IK(R,I,K)=0;
+vq_p(R,I,M)=0;
+vs_p(R,I,L)$FL_IL(R,I,L)=0;
+vx_p(R,I,L)$FL_IL(R,I,L)=0;
+vr_p(R,I,L)$FL_IL(R,I,L)=0;
+vserv_p(R,I,J)$FL_IJ(R,I,J)=0;
+res_occ_p(R,I,L)$FL_IL(R,I,L)=0;
+res_end_p(MR,INT)$MR_INT(MR,INT)=0;
+res_serv_p(R,I,J)$FL_IJ(R,I,J)=0;
+dvpg_p(R,I,L,J,dummy2)$FL_ILJ(R,I,L,J)=0;
 $else.load_prevyr
 $eval prev_year %calc_year%-1
 $gdxin '%outputdir%/gams_output/gdx_primary/%scen_name%/%prev_year%.gdx'
 $load sc_load=sc,emax_ex_load=emax_ex,emax_ex_y_load=emax_ex_y
+$load ve_p=ve_l,vq_p=vq_l,vs_p=vs_l,vx_p=vx_l,vr_p=vr_l,vserv_p=vserv_l,res_occ_p=res_occ_l,res_end_p=res_end_l,res_serv_p=res_serv_l,dvpg_p=dvpg_l
 $gdxin
 ;
 $endif.load_prevyr
