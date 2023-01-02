@@ -160,8 +160,7 @@ $batinclude %f_interp% scn  'R,I,L'   scn_t  'R,I,L'    'FL_IL(R,I,L)'
 serv(R,I,J)$(FL_IJ(R,I,J) and FL_NOTINT_J(J))                   =serv_t(R,I,J,'%calc_year%');
 gam(R,I,L)$FL_IL(R,I,L)                                         =gam_t(R,I,L,'%calc_year%');
 t_y                                                             =%calc_year%;
-t_int                                                           =1;
-$if %interval5%==on t_int                                       =1+4$(%calc_year% gt 2050);
+t_int                                                           =%T_INT%;
 cn(R,I,L)$FL_IL(R,I,L)                                          =bn(R,I,L)*(1-scn(R,I,L))*alpha(R,I,L)*exp(tn(L)*log(1+alpha(R,I,L)))/(exp(tn(L)*log(1+alpha(R,I,L)))-1)*t_int;
 cn_t(R,I,L)$FL_IL(R,I,L)                                        =cn(R,I,L)/t_int;
 
@@ -212,7 +211,8 @@ DVPG.l(R,I,L,J,dummy2)$FL_ILJ(R,I,L,J)  =dvpg_p(R,I,L,J,dummy2);
 
 * optimization
 
-Enduse.holdfixed    =1;
+Enduse.optfile  =1;
+Enduse.holdfixed=1;
 Solve Enduse minimizing VTC using LP;
 if(Enduse.modelstat>2,
     year_inf=%calc_year%;
