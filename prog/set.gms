@@ -24,6 +24,7 @@ Set
     M_O(L,J,O)              'technology mapping for service sub-groups'
     M_ML(ML,L)              'technology group mapping'
     M_MK(MK,K)              'energy group mapping'
+    ML_RT(L,L)              'technology retrofit mapping'
     dummy2                  'dummy set for houly power generation' /1,2/
     MAXMIN                  /MAX,MIN/
     YEAR(H)                 'calculation period'
@@ -38,12 +39,14 @@ Set
     FL_IJ(R,I,J)
     FL_INJ(R,I,N,J)
     FL_ILO(R,I,L,O)
+    FL_ILR(R,I,L,L)
     FL_INTK(INT,K)
     FL_INTJ(INT,J)
     FL_NOTINT_K(K)
     FL_NOTINT_J(J)
     FL_DMPG(R,I,L,J,L,J)
     FL_DMPG2(R,I,L,J)
+    FL_LH(L,H)              'technology cohort term'
 ;
 Alias (I,I1),(J,J1),(L,L1),(YEAR,YEAR1,YEAR2),(H,H2),(R,R2,R3),(MR,MR2)
 ;

@@ -8,6 +8,8 @@ Positive Variables
     VX(R,I,L)               'activity'
     VR(R,I,L)               'new installed capacity'
     VD(R,I,J)               'service supply'
+    VC(R,I,L,L1,H)          'retrofit from L to L1'
+    VSC(R,I,L,H)            'stock quantity after retrofit'
     RES_OCC(R,I,L)          'slack variable for operating stock balance'
     RES_END(MR,INT)         'slack variable for input output balance'
     RES_SERV(R,I,J)         'slack variable service demand'
@@ -33,7 +35,8 @@ Equations
     EQ_SWCMN(R,I,J)         'Min regional service share constraints'
     EQ_END(MR,INT)          'endgenous service-energy balance'
     EQ_OCC(R,I,L)           'operating capacity condition'
-    EQ_STK(R,I,L)           'stock balances'
+    EQ_STK(R,I,L)           'stock addition'
+    EQ_STR(R,I,L,H)         'stock retrofit'
     EQ_EMISS(R,I,M)         'emissions'
     EQ_GEC(MQ,MG)           'Emission constraint'
     EQ_TCE                  'Total energy system cost'
@@ -80,24 +83,29 @@ EQ_END(MR,INT)$MR_INT(MR,INT)..
 EQ_OCC(R,I,L)$FL_IL(R,I,L)..
     VX(R,I,L) =e= (1+gam(R,I,L))*(VS(R,I,L)-RES_OCC(R,I,L));
 EQ_STK(R,I,L)$FL_IL(R,I,L)..
-    VS(R,I,L) =e= sum(H$(v_year(H) le t_y and v_year(H) ge t_y-tn(L)),ssc(R,I,L,H))+VR(R,I,L)*t_int;
+    VS(R,I,L) =e= sum(H$FL_LH(L,H),VSC(R,I,L,H))+VR(R,I,L)*t_int;
+EQ_STR(R,I,L,H)$(FL_IL(R,I,L) and FL_LH(L,H))..
+    VSC(R,I,L,H) =e= ssc(R,I,L,H)+sum(L1$ML_RT(L1,L),VC(R,I,L1,L,H))-sum(L1$ML_RT(L,L1),VC(R,I,L,L1,H));
 EQ_EMISS(R,I,M)..
     VQ(R,I,M) =e= sum(K$FL_IK(R,I,K),gas(R,I,K,M)*VE(R,I,K));
 EQ_GEC(MQ,MG)$(qmax(MQ,MG) ne inf)..
     qmax(MQ,MG) =g= sum(M$M_MG(M,MG),sum((R,I)$M_MQ(R,I,MQ),VQ(R,I,M)));
 EQ_TCE..
     VTC =e= sum((R,I,L)$FL_IL(R,I,L),VX(R,I,L)*go(R,I,L))
-            +sum((R,I,K)$FL_IK(R,I,K),VE(R,I,K)*ge(R,I,K))+sum((R,I,L)$FL_IL(R,I,L),cn(R,I,L)*VR(R,I,L))+sum((R,I,M),VQ(R,I,M)*sum(MG$M_MG(M,MG),sum(MQ$M_MQ(R,I,MQ),emtax(MQ,MG))))
+            +sum((R,I,K)$FL_IK(R,I,K),VE(R,I,K)*ge(R,I,K))
+            +sum((R,I,L)$FL_IL(R,I,L),cn(R,I,L)*VR(R,I,L))
+            +sum((R,I,L,L1)$FL_ILR(R,I,L,L1),sum(H$FL_LH(L,H),cr(R,I,L,L1,H)*VC(R,I,L,L1,H)))
+            +sum((R,I,M),VQ(R,I,M)*sum(MG$M_MG(M,MG),sum(MQ$M_MQ(R,I,MQ),emtax(MQ,MG))))
             +sum((R,I,L,J,dummy2)$FL_DMPG2(R,I,L,J),DVPG(R,I,L,J,dummy2))*0.001;
 EQ_DMPG(R,I,L,J,L1,J1)$FL_DMPG(R,I,L,J,L1,J1)..
     (1+phi(R,I,L,J))*a(R,I,L,J)*VX(R,I,L)+DVPG(R,I,L,J,'1') =e= (1+phi(R,I,L1,J1))*a(R,I,L1,J1)*VX(R,I,L1)+DVPG(R,I,L1,J1,'2');
 
-Model Enduse/
+Model AIMTechnology /
     EQ_SVC,EQ_SDC,EQ_ENG,
     EQ_ESCMX,EQ_ESCMN,EQ_SRCMX,EQ_SRCMN,EQ_RTCMX,EQ_RTCMN,EQ_STCMX,EQ_STCMN,EQ_SGCMX,EQ_SGCMN,EQ_SWCMX,EQ_SWCMN,EQ_STGMX,EQ_STGMN
     EQ_END,
     EQ_OCC,
-    EQ_STK,
+    EQ_STK,EQ_STR,
     EQ_EMISS,EQ_GEC,
     EQ_TCE
     EQ_DMPG
@@ -109,6 +117,7 @@ Parameter
     vs_l(R,I,L)         'stock capacity'
     vx_l(R,I,L)         'activity'
     vr_l(R,I,L)         'new installed capacity'
+    vc_l(R,I,L,L,H)     'retrofit capacity'
     vserv_l(R,I,J)      'service supply'
     res_occ_l(R,I,L)    'slack variable for operating stock balance'
     res_och_l(R,I,L,H)  'slack variable for operating stock balance by age group'
@@ -123,6 +132,7 @@ Parameter
     eq_gec_m(MQ,MG)     'Marginal cost of emission'
     eq_rtcmx_m(R,I,ML)  'Marginal cost of new installation'
     cn_t(R,I,L)         'annualized initial cost'
+    cr_t(R,I,L,L1,H)    'annualized capital cost of technology retrofit'
     tax_t(MQ,MG)        'emission tax'
 ;
 * default value
@@ -135,34 +145,40 @@ cp_const                            =0;
 year_inf                            =%endyr%;
 
 * assign parameters
-$batinclude %f_interp% emax 'ME,MK'   emax_t 'ME,MK'    'not K_EXRES(MK)'  
-$batinclude %f_interp% a    'R,I,L,J' an_t   'R,I,L,J'  'FL_ILJ(R,I,L,J)'
-$batinclude %f_interp% e    'R,I,L,K' en_t   'R,I,L,K'  'FL_ILK(R,I,L,K)'
-$batinclude %f_interp% romx 'R,I,L'   romx_t 'R,I,L'    'FL_IL(R,I,L)'
-$batinclude %f_interp% romn 'R,I,L'   romn_t 'R,I,L'    'FL_IL(R,I,L)'
-$batinclude %f_interp% phi  'R,I,L,J' phi_t  'R,I,L,J'  'FL_ILJ(R,I,L,J)'
-$batinclude %f_interp% xi   'R,I,L,K' xi_t   'R,I,L,K'  'FL_ILK(R,I,L,K)'
-$batinclude %f_interp% thmx 'R,I,L,J' thmx_t 'R,I,L,J'  'FL_ILJ(R,I,L,J)'
-$batinclude %f_interp% thmn 'R,I,L,J' thmn_t 'R,I,L,J'  'FL_ILJ(R,I,L,J)'
-$batinclude %f_interp% chmx 'R,I,L,O' chmx_t 'R,I,L,O'  'FL_ILO(R,I,L,O)'
-$batinclude %f_interp% chmn 'R,I,L,O' chmn_t 'R,I,L,O'  'FL_ILO(R,I,L,O)'
-$batinclude %f_interp% emin 'ME,MK'   emin_t 'ME,MK'    1  
-$batinclude %f_interp% ommx 'R,I,N,J' ommx_t 'R,I,N,J'  'FL_INJ(R,I,N,J)'  
-$batinclude %f_interp% ommn 'R,I,N,J' ommn_t 'R,I,N,J'  'FL_INJ(R,I,N,J)'
-$batinclude %f_interp% sgmx 'R,I,J'   sgmx_t 'R,I,J'    'FL_IJ(R,I,J)'
-$batinclude %f_interp% sgmn 'R,I,J'   sgmn_t 'R,I,J'    'FL_IJ(R,I,J)'
-$batinclude %f_interp% bn   'R,I,L'   bn_t   'R,I,L'    'FL_IL(R,I,L)'
-$batinclude %f_interp% go   'R,I,L'   go_t   'R,I,L'    'FL_IL(R,I,L)'
-$batinclude %f_interp% ge   'R,I,K'   ge_t   'R,I,K'    'FL_IK(R,I,K)'
-$batinclude %f_interp% gas  'R,I,K,M' gas_t  'R,I,K,M'  'FL_IK(R,I,K)'
-$batinclude %f_interp% scn  'R,I,L'   scn_t  'R,I,L'    'FL_IL(R,I,L)'
+$batinclude %f_interp% emax 'ME,MK'     emax_t  'ME,MK'     'not K_EXRES(MK)'  
+$batinclude %f_interp% a    'R,I,L,J'   an_t    'R,I,L,J'   'FL_ILJ(R,I,L,J)'
+$batinclude %f_interp% e    'R,I,L,K'   en_t    'R,I,L,K'   'FL_ILK(R,I,L,K)'
+$batinclude %f_interp% romx 'R,I,L'     romx_t  'R,I,L'     'FL_IL(R,I,L)'
+$batinclude %f_interp% romn 'R,I,L'     romn_t  'R,I,L'     'FL_IL(R,I,L)'
+$batinclude %f_interp% phi  'R,I,L,J'   phi_t   'R,I,L,J'   'FL_ILJ(R,I,L,J)'
+$batinclude %f_interp% xi   'R,I,L,K'   xi_t    'R,I,L,K'   'FL_ILK(R,I,L,K)'
+$batinclude %f_interp% thmx 'R,I,L,J'   thmx_t  'R,I,L,J'   'FL_ILJ(R,I,L,J)'
+$batinclude %f_interp% thmn 'R,I,L,J'   thmn_t  'R,I,L,J'   'FL_ILJ(R,I,L,J)'
+$batinclude %f_interp% chmx 'R,I,L,O'   chmx_t  'R,I,L,O'   'FL_ILO(R,I,L,O)'
+$batinclude %f_interp% chmn 'R,I,L,O'   chmn_t  'R,I,L,O'   'FL_ILO(R,I,L,O)'
+$batinclude %f_interp% emin 'ME,MK'     emin_t  'ME,MK'     1  
+$batinclude %f_interp% ommx 'R,I,N,J'   ommx_t  'R,I,N,J'   'FL_INJ(R,I,N,J)'  
+$batinclude %f_interp% ommn 'R,I,N,J'   ommn_t  'R,I,N,J'   'FL_INJ(R,I,N,J)'
+$batinclude %f_interp% sgmx 'R,I,J'     sgmx_t  'R,I,J'     'FL_IJ(R,I,J)'
+$batinclude %f_interp% sgmn 'R,I,J'     sgmn_t  'R,I,J'     'FL_IJ(R,I,J)'
+$batinclude %f_interp% bn   'R,I,L'     bn_t    'R,I,L'     'FL_IL(R,I,L)'
+$batinclude %f_interp% br   'R,I,L,L1'  br_t    'R,I,L,L1'  'FL_ILR(R,I,L,L1)'
+$batinclude %f_interp% go   'R,I,L'     go_t    'R,I,L'     'FL_IL(R,I,L)'
+$batinclude %f_interp% ge   'R,I,K'     ge_t    'R,I,K'     'FL_IK(R,I,K)'
+$batinclude %f_interp% gas  'R,I,K,M'   gas_t   'R,I,K,M'   'FL_IK(R,I,K)'
+$batinclude %f_interp% scn  'R,I,L'     scn_t   'R,I,L'     'FL_IL(R,I,L)'
+$batinclude %f_interp% scr  'R,I,L,L1'  scr_t   'R,I,L,L1'  'FL_ILR(R,I,L,L1)'
 
 serv(R,I,J)$(FL_IJ(R,I,J) and FL_NOTINT_J(J))                   =serv_t(R,I,J,'%calc_year%');
 gam(R,I,L)$FL_IL(R,I,L)                                         =gam_t(R,I,L,'%calc_year%');
 t_y                                                             =%calc_year%;
 t_int                                                           =%T_INT%;
+FL_LH(L,H)$(v_year(H) le t_y and v_year(H) ge t_y-tn(L))        =yes;
 cn(R,I,L)$FL_IL(R,I,L)                                          =bn(R,I,L)*(1-scn(R,I,L))*alpha(R,I,L)*exp(tn(L)*log(1+alpha(R,I,L)))/(exp(tn(L)*log(1+alpha(R,I,L)))-1)*t_int;
 cn_t(R,I,L)$FL_IL(R,I,L)                                        =cn(R,I,L)/t_int;
+tr(L,H)$FL_LH(L,H)                                              =max(1,tn(L)-(t_y-v_year(H)));
+cr(R,I,L,L1,H)$(FL_ILR(R,I,L,L1) and FL_LH(L,H))                =br(R,I,L,L1)*(1-scr(R,I,L,L1))*alpha(R,I,L1)*exp(tr(L,H)*log(1+alpha(R,I,L1)))/(exp(tr(L,H)*log(1+alpha(R,I,L1)))-1)*t_int;
+cr_t(R,I,L,L1,H)$(FL_ILR(R,I,L,L1) and FL_LH(L,H))              =cr(R,I,L,L1,H)/t_int;
 
 * update cohort information
 age(H)$(%calc_year% gt v_year(H))                               =%calc_year%-v_year(H);
@@ -196,6 +212,7 @@ $if %reg_mode%==GLOBAL  VE.lo(R,I,K)$FL_IK(R,I,K)               =0;
 $if %reg_mode%==JPN     VE.lo(R,I,K)$FL_NOTINT_K(K)             =0;
 $if %reg_mode%==JPN     VE.lo(R,'CCS','T_OIL')                  =-inf;
 VE.lo(R,'H_H','CCUM0')                                          =-inf;
+* VC.fx(R,I,L,L1,H)$(FL_IL(R,I,L) and not FL_ILR(R,I,L,L1) and FL_LH(L,H))=0;
 
 * assign initial values
 VE.l(R,I,K)$FL_IK(R,I,K)                =ve_p(R,I,K);
@@ -211,10 +228,10 @@ DVPG.l(R,I,L,J,dummy2)$FL_ILJ(R,I,L,J)  =dvpg_p(R,I,L,J,dummy2);
 
 * optimization
 
-Enduse.optfile  =1;
-Enduse.holdfixed=1;
-Solve Enduse minimizing VTC using LP;
-if(Enduse.modelstat>2,
+AIMTechnology.optfile  =1;
+AIMTechnology.holdfixed=1;
+Solve AIMTechnology minimizing VTC using LP;
+if(AIMTechnology.modelstat>2,
     year_inf=%calc_year%;
 );
 $if %nonCO2pricing%==on $include '%1/inc_prog/nonCO2FFIpricing.gms'
@@ -222,7 +239,7 @@ $if %nonCO2pricing%==on $include '%1/inc_prog/nonCO2FFIpricing.gms'
 
 * output parameters
 
-sc(R,I,L,H)$FL_IL(R,I,L)            =ssc(R,I,L,H);
+sc(R,I,L,H)$(FL_IL(R,I,L) and FL_LH(L,H))=ssc(R,I,L,H)+sum(L1$ML_RT(L1,L),VC.l(R,I,L1,L,H))-sum(L1$ML_RT(L,L1),VC.l(R,I,L,L1,H));
 sc(R,I,L,'%calc_year%')$FL_IL(R,I,L)=VR.l(R,I,L)+ssc(R,I,L,'%calc_year%')$(%calc_year% eq %start_year%);
 $if %interval5%==on sc(R,I,L,H)$(FL_IL(R,I,L) and %calc_year% gt 2050 and v_year(H) le %calc_year% and v_year(H) gt %calc_year%-5)=VR.l(R,I,L);
 ve_l(R,I,K)$FL_IK(R,I,K)            =VE.l(R,I,K);
@@ -230,6 +247,7 @@ vq_l(R,I,M)                         =VQ.l(R,I,M);
 vs_l(R,I,L)$FL_IL(R,I,L)            =VS.l(R,I,L);
 vx_l(R,I,L)$FL_IL(R,I,L)            =VX.l(R,I,L);
 vr_l(R,I,L)$FL_IL(R,I,L)            =VR.l(R,I,L);
+vc_l(R,I,L,L1,H)$(FL_ILR(R,I,L,L1) and FL_LH(L,H))=VC.l(R,I,L,L1,H);
 vserv_l(R,I,J)$FL_IJ(R,I,J)         =VD.l(R,I,J);
 res_occ_l(R,I,L)$FL_IL(R,I,L)       =RES_OCC.l(R,I,L);
 res_end_l(MR,INT)$MR_INT(MR,INT)    =RES_END.l(MR,INT);
