@@ -33,6 +33,8 @@ Equations
     EQ_SGCMN(R,I,N,J)       'Min sub-service group share constraints'
     EQ_SWCMX(R,I,J)         'Max regional service share constraints'
     EQ_SWCMN(R,I,J)         'Min regional service share constraints'
+    EQ_STRMX(R,I,L,L1)      'Max technology retrofit constraint'
+    EQ_STRMN(R,I,L,L1)      'Min technology retrofit constraint'
     EQ_END(MR,INT)          'endgenous service-energy balance'
     EQ_OCC(R,I,L)           'operating capacity condition'
     EQ_STK(R,I,L)           'stock addition'
@@ -78,6 +80,10 @@ EQ_SWCMX(R,I,J)$((sgmx(R,I,J) lt 1) and FL_IJ(R,I,J))..
     sgmx(R,I,J)*sum((R2,I1),sum(L$FL_ILJ(R2,I1,L,J),(1+phi(R2,I1,L,J))*a(R2,I1,L,J)*VX(R2,I1,L))) =g= sum(L$FL_ILJ(R,I,L,J),(1+phi(R,I,L,J))*a(R,I,L,J)*VX(R,I,L));
 EQ_SWCMN(R,I,J)$(sgmn(R,I,J) and FL_IJ(R,I,J))..
     sgmn(R,I,J)*sum((R2,I1),sum(L$FL_ILJ(R2,I1,L,J),(1+phi(R2,I1,L,J))*a(R2,I1,L,J)*VX(R2,I1,L))) =l= sum(L$FL_ILJ(R,I,L,J),(1+phi(R,I,L,J))*a(R,I,L,J)*VX(R,I,L));
+EQ_STRMX(R,I,L,L1)$kamx(R,I,L,L1)..
+    kamx(R,I,L,L1) =g= sum(H$FL_LH(L,H),VC(R,I,L,L1,H));
+EQ_STRMN(R,I,L,L1)$kamn(R,I,L,L1)..
+    kamn(R,I,L,L1) =l= sum(H$FL_LH(L,H),VC(R,I,L,L1,H));
 EQ_END(MR,INT)$MR_INT(MR,INT)..
     sum((R,I,J)$(M_MR(R,I,MR) and FL_IJ(R,I,J) and FL_INTJ(INT,J)),VD(R,I,J)) =e= sum((R,I,K)$(M_MR(R,I,MR) and FL_IK(R,I,K) and FL_INTK(INT,K)),VE(R,I,K))+RES_END(MR,INT);
 EQ_OCC(R,I,L)$FL_IL(R,I,L)..
@@ -102,7 +108,7 @@ EQ_DMPG(R,I,L,J,L1,J1)$FL_DMPG(R,I,L,J,L1,J1)..
 
 Model AIMTechnology /
     EQ_SVC,EQ_SDC,EQ_ENG,
-    EQ_ESCMX,EQ_ESCMN,EQ_SRCMX,EQ_SRCMN,EQ_RTCMX,EQ_RTCMN,EQ_STCMX,EQ_STCMN,EQ_SGCMX,EQ_SGCMN,EQ_SWCMX,EQ_SWCMN,EQ_STGMX,EQ_STGMN
+    EQ_ESCMX,EQ_ESCMN,EQ_SRCMX,EQ_SRCMN,EQ_RTCMX,EQ_RTCMN,EQ_STCMX,EQ_STCMN,EQ_SGCMX,EQ_SGCMN,EQ_SWCMX,EQ_SWCMN,EQ_STGMX,EQ_STGMN,EQ_STRMX,EQ_STRMN,
     EQ_END,
     EQ_OCC,
     EQ_STK,EQ_STR,
@@ -161,6 +167,8 @@ $batinclude %f_interp% ommx 'R,I,N,J'   ommx_t  'R,I,N,J'   'FL_INJ(R,I,N,J)'
 $batinclude %f_interp% ommn 'R,I,N,J'   ommn_t  'R,I,N,J'   'FL_INJ(R,I,N,J)'
 $batinclude %f_interp% sgmx 'R,I,J'     sgmx_t  'R,I,J'     'FL_IJ(R,I,J)'
 $batinclude %f_interp% sgmn 'R,I,J'     sgmn_t  'R,I,J'     'FL_IJ(R,I,J)'
+$batinclude %f_interp% kamx 'R,I,L,L1'  kamx_t  'R,I,L,L1'  'FL_ILR(R,I,L,L1)'
+$batinclude %f_interp% kamn 'R,I,L,L1'  kamn_t  'R,I,L,L1'  'FL_ILR(R,I,L,L1)'
 $batinclude %f_interp% bn   'R,I,L'     bn_t    'R,I,L'     'FL_IL(R,I,L)'
 $batinclude %f_interp% br   'R,I,L,L1'  br_t    'R,I,L,L1'  'FL_ILR(R,I,L,L1)'
 $batinclude %f_interp% go   'R,I,L'     go_t    'R,I,L'     'FL_IL(R,I,L)'
