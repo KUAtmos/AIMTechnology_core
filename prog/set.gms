@@ -46,7 +46,7 @@ Set
     FL_NOTINT_J(J)
     FL_DMPG(R,I,L,J,L,J)
     FL_DMPG2(R,I,L,J)
-    FL_LH(L,H)              'technology cohort term'
+    FL_LH(R,L,H)            'technology cohort term'
 ;
 Alias (I,I1),(J,J1),(L,L1),(YEAR,YEAR1,YEAR2),(H,H2),(R,R2,R3),(MR,MR2)
 ;

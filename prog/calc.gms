@@ -81,16 +81,16 @@ EQ_SWCMX(R,I,J)$((sgmx(R,I,J) lt 1) and FL_IJ(R,I,J))..
 EQ_SWCMN(R,I,J)$(sgmn(R,I,J) and FL_IJ(R,I,J))..
     sgmn(R,I,J)*sum((R2,I1),sum(L$FL_ILJ(R2,I1,L,J),(1+phi(R2,I1,L,J))*a(R2,I1,L,J)*VX(R2,I1,L))) =l= sum(L$FL_ILJ(R,I,L,J),(1+phi(R,I,L,J))*a(R,I,L,J)*VX(R,I,L));
 EQ_STRMX(R,I,L,L1)$kamx(R,I,L,L1)..
-    kamx(R,I,L,L1) =g= sum(H$FL_LH(L,H),VC(R,I,L,L1,H));
+    kamx(R,I,L,L1) =g= sum(H$FL_LH(R,L,H),VC(R,I,L,L1,H));
 EQ_STRMN(R,I,L,L1)$kamn(R,I,L,L1)..
-    kamn(R,I,L,L1) =l= sum(H$FL_LH(L,H),VC(R,I,L,L1,H));
+    kamn(R,I,L,L1) =l= sum(H$FL_LH(R,L,H),VC(R,I,L,L1,H));
 EQ_END(MR,INT)$MR_INT(MR,INT)..
     sum((R,I,J)$(M_MR(R,I,MR) and FL_IJ(R,I,J) and FL_INTJ(INT,J)),VD(R,I,J)) =e= sum((R,I,K)$(M_MR(R,I,MR) and FL_IK(R,I,K) and FL_INTK(INT,K)),VE(R,I,K))+RES_END(MR,INT);
 EQ_OCC(R,I,L)$FL_IL(R,I,L)..
     VX(R,I,L) =e= (1+gam(R,I,L))*(VS(R,I,L)-RES_OCC(R,I,L));
 EQ_STK(R,I,L)$FL_IL(R,I,L)..
-    VS(R,I,L) =e= sum(H$FL_LH(L,H),VSC(R,I,L,H))+VR(R,I,L)*t_int;
-EQ_STR(R,I,L,H)$(FL_IL(R,I,L) and FL_LH(L,H))..
+    VS(R,I,L) =e= sum(H$FL_LH(R,L,H),VSC(R,I,L,H))+VR(R,I,L)*t_int;
+EQ_STR(R,I,L,H)$(FL_IL(R,I,L) and FL_LH(R,L,H))..
     VSC(R,I,L,H) =e= ssc(R,I,L,H)+sum(L1$ML_RT(L1,L),VC(R,I,L1,L,H))-sum(L1$ML_RT(L,L1),VC(R,I,L,L1,H));
 EQ_EMISS(R,I,M)..
     VQ(R,I,M) =e= sum(K$FL_IK(R,I,K),gas(R,I,K,M)*VE(R,I,K));
@@ -100,7 +100,7 @@ EQ_TCE..
     VTC =e= sum((R,I,L)$FL_IL(R,I,L),VX(R,I,L)*go(R,I,L))
             +sum((R,I,K)$FL_IK(R,I,K),VE(R,I,K)*ge(R,I,K))
             +sum((R,I,L)$FL_IL(R,I,L),cn(R,I,L)*VR(R,I,L))
-            +sum((R,I,L,L1)$FL_ILR(R,I,L,L1),sum(H$FL_LH(L,H),cr(R,I,L,L1,H)*VC(R,I,L,L1,H)))
+            +sum((R,I,L,L1)$FL_ILR(R,I,L,L1),sum(H$FL_LH(R,L,H),cr(R,I,L,L1,H)*VC(R,I,L,L1,H)))
             +sum((R,I,M),VQ(R,I,M)*sum(MG$M_MG(M,MG),sum(MQ$M_MQ(R,I,MQ),emtax(MQ,MG))))
             +sum((R,I,L,J,dummy2)$FL_DMPG2(R,I,L,J),DVPG(R,I,L,J,dummy2))*0.001;
 EQ_DMPG(R,I,L,J,L1,J1)$FL_DMPG(R,I,L,J,L1,J1)..
@@ -162,7 +162,7 @@ $batinclude %f_interp% thmx 'R,I,L,J'   thmx_t  'R,I,L,J'   'FL_ILJ(R,I,L,J)'
 $batinclude %f_interp% thmn 'R,I,L,J'   thmn_t  'R,I,L,J'   'FL_ILJ(R,I,L,J)'
 $batinclude %f_interp% chmx 'R,I,L,O'   chmx_t  'R,I,L,O'   'FL_ILO(R,I,L,O)'
 $batinclude %f_interp% chmn 'R,I,L,O'   chmn_t  'R,I,L,O'   'FL_ILO(R,I,L,O)'
-$batinclude %f_interp% emin 'ME,MK'     emin_t  'ME,MK'     1  
+$batinclude %f_interp% emin 'ME,MK'     emin_t  'ME,MK'     1
 $batinclude %f_interp% ommx 'R,I,N,J'   ommx_t  'R,I,N,J'   'FL_INJ(R,I,N,J)'  
 $batinclude %f_interp% ommn 'R,I,N,J'   ommn_t  'R,I,N,J'   'FL_INJ(R,I,N,J)'
 $batinclude %f_interp% sgmx 'R,I,J'     sgmx_t  'R,I,J'     'FL_IJ(R,I,J)'
@@ -181,22 +181,22 @@ serv(R,I,J)$(FL_IJ(R,I,J) and FL_NOTINT_J(J))                   =serv_t(R,I,J,'%
 gam(R,I,L)$FL_IL(R,I,L)                                         =gam_t(R,I,L,'%calc_year%');
 t_y                                                             =%calc_year%;
 t_int                                                           =%T_INT%;
-FL_LH(L,H)$(v_year(H) le t_y and v_year(H) ge t_y-tn(L))        =yes;
-cn(R,I,L)$FL_IL(R,I,L)                                          =bn(R,I,L)*(1-scn(R,I,L))*alpha(R,I,L)*exp(tn(L)*log(1+alpha(R,I,L)))/(exp(tn(L)*log(1+alpha(R,I,L)))-1)*t_int;
+FL_LH(R,L,H)$(v_year(H) le t_y and v_year(H) ge t_y-tn(R,L))    =yes;
+cn(R,I,L)$FL_IL(R,I,L)                                          =bn(R,I,L)*(1-scn(R,I,L))*alpha(R,I,L)*exp(tn(R,L)*log(1+alpha(R,I,L)))/(exp(tn(R,L)*log(1+alpha(R,I,L)))-1)*t_int;
 cn_t(R,I,L)$FL_IL(R,I,L)                                        =cn(R,I,L)/t_int;
-tr(L,H)$FL_LH(L,H)                                              =max(1,tn(L)-(t_y-v_year(H)));
-cr(R,I,L,L1,H)$(FL_ILR(R,I,L,L1) and FL_LH(L,H))                =br(R,I,L,L1)*(1-scr(R,I,L,L1))*alpha(R,I,L1)*exp(tr(L,H)*log(1+alpha(R,I,L1)))/(exp(tr(L,H)*log(1+alpha(R,I,L1)))-1)*t_int;
-cr_t(R,I,L,L1,H)$(FL_ILR(R,I,L,L1) and FL_LH(L,H))              =cr(R,I,L,L1,H)/t_int;
+tr(R,L,H)$FL_LH(R,L,H)                                          =max(1,tn(R,L)-(t_y-v_year(H)));
+cr(R,I,L,L1,H)$(FL_ILR(R,I,L,L1) and FL_LH(R,L,H))              =br(R,I,L,L1)*(1-scr(R,I,L,L1))*alpha(R,I,L1)*exp(tr(R,L,H)*log(1+alpha(R,I,L1)))/(exp(tr(R,L,H)*log(1+alpha(R,I,L1)))-1)*t_int;
+cr_t(R,I,L,L1,H)$(FL_ILR(R,I,L,L1) and FL_LH(R,L,H))            =cr(R,I,L,L1,H)/t_int;
 
 * update cohort information
 age(H)$(%calc_year% gt v_year(H))                               =%calc_year%-v_year(H);
 ssc(R,I,L,H)$(%calc_year% eq %start_year% and FL_IL(R,I,L))     =sc_base(R,I,L,H);
 ssc(R,I,L,H)$(%calc_year% gt %start_year% and FL_IL(R,I,L))     =sc_load(R,I,L,H);
-ssc(R,I,L,H)$(%calc_year% gt %start_year% and FL_IL(R,I,L) and age(H) ge tn(L))=0;
+ssc(R,I,L,H)$(%calc_year% gt %start_year% and FL_IL(R,I,L) and age(H) ge tn(R,L))=0;
 
 * update maximum installation capacity where maximum stock capacity decreases during the calculation period
-essc(R,I,L_CAPDEC,YEAR)$(FL_IL(R,I,L_CAPDEC) and v_year(YEAR) ge %calc_year%)   =sum(H$(v_year(YEAR)-v_year(H) le tn(L_CAPDEC)),ssc(R,I,L_CAPDEC,H));
-tumx_dec(R,I,L_CAPDEC)$FL_IL(R,I,L_CAPDEC)                                      =smin(YEAR$(v_year(YEAR) gt %calc_year% and v_year(YEAR) le %calc_year%+tn(L_CAPDEC)),romx_t(R,I,L_CAPDEC,YEAR)-essc(R,I,L_CAPDEC,YEAR))/t_int;
+essc(R,I,L_CAPDEC,YEAR)$(FL_IL(R,I,L_CAPDEC) and v_year(YEAR) ge %calc_year%)   =sum(H$(v_year(YEAR)-v_year(H) le tn(R,L_CAPDEC)),ssc(R,I,L_CAPDEC,H));
+tumx_dec(R,I,L_CAPDEC)$FL_IL(R,I,L_CAPDEC)                                      =smin(YEAR$(v_year(YEAR) gt %calc_year% and v_year(YEAR) le %calc_year%+tn(R,L_CAPDEC)),romx_t(R,I,L_CAPDEC,YEAR)-essc(R,I,L_CAPDEC,YEAR))/t_int;
 tumx_dec(R,I,L_CAPDEC)$(FL_IL(R,I,L_CAPDEC) and tumx_dec(R,I,L_CAPDEC) le 0)    =eps;
 
 tumx(R,I,ML)$sum(L$M_ML(ML,L),FL_IL(R,I,L))                     =tumx_t(R,I,ML,'%calc_year%');
@@ -220,7 +220,7 @@ $if %reg_mode%==GLOBAL  VE.lo(R,I,K)$FL_IK(R,I,K)               =0;
 $if %reg_mode%==JPN     VE.lo(R,I,K)$FL_NOTINT_K(K)             =0;
 $if %reg_mode%==JPN     VE.lo(R,'CCS','T_OIL')                  =-inf;
 VE.lo(R,'H_H','CCUM0')                                          =-inf;
-* VC.fx(R,I,L,L1,H)$(FL_IL(R,I,L) and not FL_ILR(R,I,L,L1) and FL_LH(L,H))=0;
+* VC.fx(R,I,L,L1,H)$(FL_IL(R,I,L) and not FL_ILR(R,I,L,L1) and FL_LH(R,L,H))=0;
 
 * assign initial values
 VE.l(R,I,K)$FL_IK(R,I,K)                =ve_p(R,I,K);
@@ -247,7 +247,7 @@ $if %nonCO2pricing%==on $include '%1/inc_prog/nonCO2FFIpricing.gms'
 
 * output parameters
 
-sc(R,I,L,H)$(FL_IL(R,I,L) and FL_LH(L,H))=ssc(R,I,L,H)+sum(L1$ML_RT(L1,L),VC.l(R,I,L1,L,H))-sum(L1$ML_RT(L,L1),VC.l(R,I,L,L1,H));
+sc(R,I,L,H)$(FL_IL(R,I,L) and FL_LH(R,L,H))=ssc(R,I,L,H)+sum(L1$ML_RT(L1,L),VC.l(R,I,L1,L,H))-sum(L1$ML_RT(L,L1),VC.l(R,I,L,L1,H));
 sc(R,I,L,'%calc_year%')$FL_IL(R,I,L)=VR.l(R,I,L)+ssc(R,I,L,'%calc_year%')$(%calc_year% eq %start_year%);
 $if %interval5%==on sc(R,I,L,H)$(FL_IL(R,I,L) and %calc_year% gt 2050 and v_year(H) le %calc_year% and v_year(H) gt %calc_year%-5)=VR.l(R,I,L);
 ve_l(R,I,K)$FL_IK(R,I,K)            =VE.l(R,I,K);
@@ -255,7 +255,7 @@ vq_l(R,I,M)                         =VQ.l(R,I,M);
 vs_l(R,I,L)$FL_IL(R,I,L)            =VS.l(R,I,L);
 vx_l(R,I,L)$FL_IL(R,I,L)            =VX.l(R,I,L);
 vr_l(R,I,L)$FL_IL(R,I,L)            =VR.l(R,I,L);
-vc_l(R,I,L,L1,H)$(FL_ILR(R,I,L,L1) and FL_LH(L,H))=VC.l(R,I,L,L1,H);
+vc_l(R,I,L,L1,H)$(FL_ILR(R,I,L,L1) and FL_LH(R,L,H))=VC.l(R,I,L,L1,H);
 vserv_l(R,I,J)$FL_IJ(R,I,J)         =VD.l(R,I,J);
 res_occ_l(R,I,L)$FL_IL(R,I,L)       =RES_OCC.l(R,I,L);
 res_end_l(MR,INT)$MR_INT(MR,INT)    =RES_END.l(MR,INT);
