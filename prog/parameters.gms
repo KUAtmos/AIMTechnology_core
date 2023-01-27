@@ -36,8 +36,11 @@ Parameters
     cn(R,I,L)           'annualized capital cost'
     br(R,I,L,L1)        'capital cost of technology retrofit'
     cr(R,I,L,L1,H)      'annualized capital cost of technology retrofit'
+    bp(R,I,L)           'capital cost of replacement'
+    cp(R,I,L)           'annualized capital cost of replacement'
     scn(R,I,L)          'subsidy rate for initial cost'
     scr(R,I,L,L1)       'subsidy rate for technology retrofit'
+    scp(R,I,L)          'subsidy rate for technology replacement'
     qmax                'emissions constraint'
     emtax(MQ,MG)        'emission tax in 1000US$/t-CO2'
     gas(R,I,K,M)        'emission factor'
@@ -57,6 +60,7 @@ Parameters
     sc_load(R,I,L,H)    'stock quantity in the previous year'
     bn_t(R,I,L,H)       'capital cost (USD2010 per unit)'
     br_t(R,I,L,L,H)     'capital cost of stock retrofit (USD2010 per unit)'
+    bp_t(R,I,L,H)       'capital cost of stock replacement (USD2010 per unit)'
     go_t(R,I,L,H)       'O&M cost excl. fuel cost (USD2010 per unit)'
     thmx_t(R,I,L,J,H)   'maximum allowable service share'
     thmn_t(R,I,L,J,H)   'minimum allowable service share'
@@ -76,6 +80,7 @@ Parameters
     xi_t(R,I,L,K,H)     'energy efficiency improvement'
     scn_t(R,I,L,H)      'subsidy rate for initial cost'
     scr_t(R,I,L,L1,H)   'subsidy rate for technology retrofit'
+    scp_t(R,I,L,H)      'subsidy rate for technology replacement'
     res_end_up(MR,INT,H)'upper bound of slack variable for input output balance'
     CO2FFIprice         'Marginal abatement cost of CO2-FFI to impose equivalent prices on non-CO2'
     emax_ex(ME,MK)      'available exhaustible resources'
@@ -84,6 +89,7 @@ Parameters
     emax_ex_y_load(ME,MK) 'available exhaustible resources'
     essc(R,I,L,H)       'expected stock quantity remaining in year H'
     tumx_dec(R,I,L)     'upper limit of new installation for device whose stock capacity decreases'
+    ssr(R,I,L)          'retired stock'
     ve_p(R,I,K)
     vq_p(R,I,M)
     vs_p(R,I,L)
