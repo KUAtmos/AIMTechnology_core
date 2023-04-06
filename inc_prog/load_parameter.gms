@@ -7,7 +7,7 @@ $load phi_t,xi_t,scn_t,scr_t,scp_t,v_year,alpha,tn,emtax_t,res_end_up,essc,tumx_
 $gdxin
 
 $setglobal T_INT 1
-$if %interval5%==on $ife %calc_year%>2050 $setglobal T_INT 5
+$if %interval5%==on $ife %calc_year%>%interval5start% $setglobal T_INT 5
 
 $evalGlobal.Set start_year YEAR.firsttl
 

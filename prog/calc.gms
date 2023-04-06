@@ -262,7 +262,7 @@ $if %nonCO2pricing%==on $include '%1/inc_prog/nonCO2FFIpricing.gms'
 
 sc(R,I,L,H)$(FL_IL(R,I,L) and FL_LH(R,L,H))=ssc(R,I,L,H)+sum(L1$ML_RT(L1,L),VC.l(R,I,L1,L,H))-sum(L1$ML_RT(L,L1),VC.l(R,I,L,L1,H));
 sc(R,I,L,'%calc_year%')$FL_IL(R,I,L)=VR.l(R,I,L)+VP.l(R,I,L)+ssc(R,I,L,'%calc_year%')$(%calc_year% eq %start_year%);
-$if %interval5%==on sc(R,I,L,H)$(FL_IL(R,I,L) and %calc_year% gt 2050 and v_year(H) le %calc_year% and v_year(H) gt %calc_year%-5)=VR.l(R,I,L)+VP.l(R,I,L);
+$if %interval5%==on sc(R,I,L,H)$(FL_IL(R,I,L) and %calc_year% gt %interval5start% and v_year(H) le %calc_year% and v_year(H) gt %calc_year%-5)=VR.l(R,I,L)+VP.l(R,I,L);
 ve_l(R,I,K)$FL_IK(R,I,K)            =VE.l(R,I,K);
 vq_l(R,I,M)                         =VQ.l(R,I,M);
 vs_l(R,I,L)$FL_IL(R,I,L)            =VS.l(R,I,L);
