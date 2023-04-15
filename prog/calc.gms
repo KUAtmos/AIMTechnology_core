@@ -93,7 +93,8 @@ EQ_OCC(R,I,L)$FL_IL(R,I,L)..
 EQ_STK(R,I,L)$FL_IL(R,I,L)..
     VS(R,I,L) =e= sum(H$FL_LH(R,L,H),VSC(R,I,L,H))+(VR(R,I,L)+VP(R,I,L))*t_int;
 EQ_STR(R,I,L,H)$(FL_IL(R,I,L) and FL_LH(R,L,H))..
-    VSC(R,I,L,H) =e= ssc(R,I,L,H)+sum(L1$ML_RT(L1,L),VC(R,I,L1,L,H))-sum(L1$ML_RT(L,L1),VC(R,I,L,L1,H));
+$if %TECH_RETROFIT%==on     VSC(R,I,L,H) =e= ssc(R,I,L,H)+sum(L1$ML_RT(L1,L),VC(R,I,L1,L,H))-sum(L1$ML_RT(L,L1),VC(R,I,L,L1,H));
+$if not %TECH_RETROFIT%==on VSC(R,I,L,H) =e= ssc(R,I,L,H);
 EQ_STP(R,I,L)$FL_RP(R,I,L)..
     ssr(R,I,L) =g= VP(R,I,L);
 EQ_EMISS(R,I,M)..
@@ -104,7 +105,7 @@ EQ_TCE..
     VTC =e= sum((R,I,L)$FL_IL(R,I,L),VX(R,I,L)*go(R,I,L))
             +sum((R,I,K)$FL_IK(R,I,K),VE(R,I,K)*ge(R,I,K))
             +sum((R,I,L)$FL_IL(R,I,L),cn(R,I,L)*VR(R,I,L)+cp(R,I,L)*VP(R,I,L))
-            +sum((R,I,L,L1)$FL_ILR(R,I,L,L1),sum(H$FL_LH(R,L,H),cr(R,I,L,L1,H)*VC(R,I,L,L1,H)))
+$if %TECH_RETROFIT%==on +sum((R,I,L,L1)$FL_ILR(R,I,L,L1),sum(H$FL_LH(R,L,H),cr(R,I,L,L1,H)*VC(R,I,L,L1,H)))
             +sum((R,I,M),VQ(R,I,M)*sum(MG$M_MG(M,MG),sum(MQ$M_MQ(R,I,MQ),emtax(MQ,MG))))
             +sum((R,I,L,J,dummy2)$FL_DMPG2(R,I,L,J),DVPG(R,I,L,J,dummy2))*0.001;
 EQ_DMPG(R,I,L,J,L1,J1)$FL_DMPG(R,I,L,J,L1,J1)..
@@ -112,7 +113,8 @@ EQ_DMPG(R,I,L,J,L1,J1)$FL_DMPG(R,I,L,J,L1,J1)..
 
 Model AIMTechnology /
     EQ_SVC,EQ_SDC,EQ_ENG,
-    EQ_ESCMX,EQ_ESCMN,EQ_SRCMX,EQ_SRCMN,EQ_RTCMX,EQ_RTCMN,EQ_STCMX,EQ_STCMN,EQ_SGCMX,EQ_SGCMN,EQ_SWCMX,EQ_SWCMN,EQ_STGMX,EQ_STGMN,EQ_STRMX,EQ_STRMN,
+    EQ_ESCMX,EQ_ESCMN,EQ_SRCMX,EQ_SRCMN,EQ_RTCMX,EQ_RTCMN,EQ_STCMX,EQ_STCMN,EQ_SGCMX,EQ_SGCMN,EQ_SWCMX,EQ_SWCMN,EQ_STGMX,EQ_STGMN
+$if %TECH_RETROFIT%==on EQ_STRMX,EQ_STRMN,
     EQ_END,
     EQ_OCC,
     EQ_STK,EQ_STR,EQ_STP,
@@ -232,7 +234,7 @@ $if %reg_mode%==GLOBAL  VE.lo(R,I,K)$FL_IK(R,I,K)               =0;
 $if %reg_mode%==JPN     VE.lo(R,I,K)$FL_NOTINT_K(K)             =0;
 $if %reg_mode%==JPN     VE.lo(R,'CCS','T_OIL')                  =-inf;
 VE.lo(R,'H_H','CCUM0')                                          =-inf;
-* VC.fx(R,I,L,L1,H)$(FL_IL(R,I,L) and not FL_ILR(R,I,L,L1) and FL_LH(R,L,H))=0;
+* VC.fx(R,I,L,L1,H)$(FL_IL(R,I,L) and not ML_RT(L,L1) and FL_LH(R,L,H))=0;
 
 * assign initial values
 VE.l(R,I,K)$FL_IK(R,I,K)                =ve_p(R,I,K);
@@ -260,7 +262,8 @@ $if %nonCO2pricing%==on $include '%1/inc_prog/nonCO2FFIpricing.gms'
 
 * output parameters
 
-sc(R,I,L,H)$(FL_IL(R,I,L) and FL_LH(R,L,H))=ssc(R,I,L,H)+sum(L1$ML_RT(L1,L),VC.l(R,I,L1,L,H))-sum(L1$ML_RT(L,L1),VC.l(R,I,L,L1,H));
+$if %TECH_RETROFIT%==on     sc(R,I,L,H)$(FL_IL(R,I,L) and FL_LH(R,L,H))=ssc(R,I,L,H)+sum(L1$ML_RT(L1,L),VC.l(R,I,L1,L,H))-sum(L1$ML_RT(L,L1),VC.l(R,I,L,L1,H));
+$if not %TECH_RETROFIT%==on sc(R,I,L,H)$(FL_IL(R,I,L) and FL_LH(R,L,H))=ssc(R,I,L,H);
 sc(R,I,L,'%calc_year%')$FL_IL(R,I,L)=VR.l(R,I,L)+VP.l(R,I,L)+ssc(R,I,L,'%calc_year%')$(%calc_year% eq %start_year%);
 $if %interval5%==on sc(R,I,L,H)$(FL_IL(R,I,L) and %calc_year% gt %interval5start% and v_year(H) le %calc_year% and v_year(H) gt %calc_year%-5)=VR.l(R,I,L)+VP.l(R,I,L);
 ve_l(R,I,K)$FL_IK(R,I,K)            =VE.l(R,I,K);
@@ -268,7 +271,8 @@ vq_l(R,I,M)                         =VQ.l(R,I,M);
 vs_l(R,I,L)$FL_IL(R,I,L)            =VS.l(R,I,L);
 vx_l(R,I,L)$FL_IL(R,I,L)            =VX.l(R,I,L);
 vr_l(R,I,L)$FL_IL(R,I,L)            =VR.l(R,I,L);
-vc_l(R,I,L,L1,H)$(FL_ILR(R,I,L,L1) and FL_LH(R,L,H))=VC.l(R,I,L,L1,H);
+$if %TECH_RETROFIT%==on     vc_l(R,I,L,L1,H)$(FL_ILR(R,I,L,L1) and FL_LH(R,L,H))=VC.l(R,I,L,L1,H);
+$if not %TECH_RETROFIT%==on vc_l(R,I,L,L1,H)$(FL_ILR(R,I,L,L1) and FL_LH(R,L,H))=0;
 vp_l(R,I,L)$FL_RP(R,I,L)            =VP.l(R,I,L);
 vserv_l(R,I,J)$FL_IJ(R,I,J)         =VD.l(R,I,J);
 res_occ_l(R,I,L)$FL_IL(R,I,L)       =RES_OCC.l(R,I,L);
