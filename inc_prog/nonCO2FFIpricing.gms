@@ -6,4 +6,4 @@ if(CO2FFIprice gt 0,
     if(AIMTechnology.modelstat>2,
         year_inf=%calc_year%;
     );
-;
+);
