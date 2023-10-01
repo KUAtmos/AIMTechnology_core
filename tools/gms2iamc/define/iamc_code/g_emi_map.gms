@@ -1,0 +1,39 @@
+Emi_CO2                                 .FFI.(CO2e,CO2f,CO2i,CO2bc,CO2dc,CO2l)
+Emi_CO2_Ene                             .ENG.(CO2e,CO2f,CO2bc)
+Emi_CO2_Ene_and_Ind_Pro                 .FFI.(CO2e,CO2f,CO2bc,CO2i)
+Emi_CO2_Ene_and_Ind_Pro_inc_Dir_Air_Cap .FFI.(CO2e,CO2f,CO2bc,CO2i,CO2dc)
+Emi_CO2_Ene_inc_Dir_Air_Cap             .ENG.(CO2e,CO2f,CO2bc,CO2dc)
+Emi_CO2_Ene_Dem                         .DMD.(CO2e,CO2bc)
+Emi_CO2_Ene_Dem_AFO                     .AFF.(CO2e,CO2bc)
+Emi_CO2_Ene_Dem_Ind                     .IND.(CO2e,CO2bc)
+Emi_CO2_Ene_Dem_Oth_Sec                 .ODM.(CO2e,CO2bc)
+Emi_CO2_Ene_Dem_Res                     .RES.(CO2e,CO2bc)
+Emi_CO2_Ene_Dem_Com                     .COM.(CO2e,CO2bc)
+Emi_CO2_Ene_Dem_Res_and_Com             .BLD.(CO2e,CO2bc)
+Emi_CO2_Ene_Dem_Tra_Fre                 .PSS.(CO2e,CO2bc)
+Emi_CO2_Ene_Dem_Tra_Pss                 .FRG.(CO2e,CO2bc)
+Emi_CO2_Ene_Dem_Tra                     .TRP.(CO2e,CO2bc)
+Emi_CO2_Ene_Sup                         .SUP.(CO2e,CO2bc,CO2f)
+Emi_CO2_Ene_Sup_Ele                     .ELE.(CO2e,CO2bc)
+Emi_CO2_Ene_Sup_Gas                     .GPR.(CO2e,CO2bc,CO2f)
+Emi_CO2_Ene_Sup_Heat                    .DHC.(CO2e,CO2bc)
+Emi_CO2_Ene_Sup_Liq                     .OLR.(CO2e,CO2bc,CO2f)
+Emi_CO2_Ene_Sup_Solids                  .COK.(CO2e,CO2bc,CO2f)
+Emi_CO2_Ene_Sup_Oth_Sec                 .H_H.(CO2e,CO2bc)
+Emi_CO2_Ind_Pro                         .FFI.CO2i
+Emi_CO2_Oth                             .CCS.CO2dc
+
+Emi_CO2_Ene_Dem_Res_and_Com_Com         .COM.(CO2e,CO2bc)
+Emi_CO2_Ene_Dem_Res_and_Com_Res         .RES.(CO2e,CO2bc)
+
+Emi_CO2_Ene_Agg___Fug                   .ENG.CO2f
+Emi_CO2_Ene_Sup_Agg___Fug               .SUP.CO2f
+Emi_CO2_Ene_Sup_Gas_and_Liq_Fug         .(GPR,OLR).CO2f
+Emi_CO2_Ene_Sup_Gas_Fug                 .GPR.CO2f
+Emi_CO2_Ene_Sup_Liq_Fug                 .OLR.CO2f
+Emi_CO2_Ene_Sup_SolidsFug               .COK.CO2f
+Emi_CO2_Ene_Com                         .ENG.(CO2e,CO2f)
+Emi_CO2_Ene_Bio                         .ENG.CO2b
+
+Emi_CO2_Ene_Sup_Ele_Fos                 .ELE.CO2e
+Emi_CO2_Ene_Sup_Ele_Bio                 .ELE.CO2bc

@@ -1,6 +1,9 @@
 scen_id=$1
+gams ${prog_dir}/prog/param_prep.gms lo=2 --reg_mode=${region} --prog_dir=${prog_dir} --outputdir=${out_dir} \
+     --scen_group=${scenario} --scen_id=${scen_id} --Nthreads=${Nthreads} \
+     o=${out_dir}/gams_output/log/${scen_id}_dataprep.lst logfile=${out_dir}/gams_output/log/${scen_id}_dataprep.log
 
-for i in `cat ${prog_dir}/data/year_list/${scen_id}.txt`; do
+for i in `cat ${out_dir}/data/year_list/${scen_id}.txt`; do
      mkdir -p ${out_dir}/gams_output/log/${scen_id} 2>/dev/null
      mkdir -p ${out_dir}/gams_output/gdx_primary/${scen_id} 2>/dev/null
      gams ${prog_dir}/prog/main.gms lo=2 --calc_year=${i} --reg_mode=${region} --prog_dir=${prog_dir} --outputdir=${out_dir} \
