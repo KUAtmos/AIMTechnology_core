@@ -1,0 +1,31 @@
+COLM2   .(PES   ,COL)
+CRUM2   .(PES   ,OIL)
+NGSM2G  .(PES   ,NGS)
+NGSIMP  .(PES   ,NGS)
+NGSM2L  .(PES   ,NGS)
+NUC     .(PES   ,NUC)
+RHY1    .(PES   ,HYD)
+RHY2    .(PES   ,HYD)
+RGEP    .(PES   ,GEO)
+RGEH    .(PES   ,GEO)
+SOL     .(PES   ,SOL)
+WIN     .(PES   ,WND)
+ORN     .(PES   ,OTH)
+CRN     .(PES   ,BIM)
+CRNE    .(PES   ,BIM)
+CRNM    .(PES   ,BIM)
+CRNEZ   .(PES   ,BIM)
+CRNM0L  .(PES   ,BIM)
+CRN1ST  .(PES   ,BIM)
+CRNEC   .(PES   ,BCS)
+CRNM0C  .(PES   ,BCS)
+COLC    .COL_CCS
+OILC    .OIL_CCS
+GNGC    .NGS_CCS
+NGSC    .NGS_CCS
+CRNM0   .BMSCRO
+CRNAGR  .BMSAGR
+CRNFRR  .BMSFRR
+CRNMSW  .BMSMSW
+CRNMAN  .BMSMAN
+CRN1ST  .BMS1ST
