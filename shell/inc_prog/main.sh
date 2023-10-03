@@ -57,14 +57,14 @@ rm -f ${out_dir}/gams_output/set/scenario_list.txt 2>/dev/null
 for i in "${scen_id[@]}"; do echo ${i} >> ${out_dir}/gams_output/set/scenario_list.txt; done
 
 # main calculation ------------------------------------------
-if [ "${run_parallel}" = "on" ]; then
-    main_parallel_run
-    else
-    for i in "${scen_id[@]}"; do
-        . ${prog_dir}/shell/inc_prog/gms_execute.sh ${i}
-        echo ...
-        done
-    fi
+# if [ "${run_parallel}" = "on" ]; then
+#     main_parallel_run
+#     else
+#     for i in "${scen_id[@]}"; do
+#         . ${prog_dir}/shell/inc_prog/gms_execute.sh ${i}
+#         echo ...
+#         done
+#     fi
 
 # generate iamc template ------------------------------------------
 gms2iamc_parallel_run

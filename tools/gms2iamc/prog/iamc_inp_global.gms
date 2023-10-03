@@ -190,7 +190,6 @@ iamcr('Trd_Prm_Ene_Imp_Oil_Vol',RG,Y)       =sum(R$M_RG(R,RG),sum(I$sameas(I,'OI
 iamcr('Trd_Prm_Ene_Imp_Bio_Vol',RG,Y)       =sum(R$M_RG(R,RG),sum(I$sameas(I,'CRN'),ve_l(R,I,'CRNS2',Y)))/1000;
 iamcr('Trd_Sec_Ene_Imp_Liq_Oil_Vol',RG,Y)   =sum(R$M_RG(R,RG),sum(I$sameas(I,'OIL'),ve_l(R,I,'OILS1',Y)))/1000;
 iamcr('Trd_Sec_Ene_Imp_Liq_Bio_Vol',RG,Y)   =sum(R$M_RG(R,RG),sum(I$sameas(I,'CRN'),ve_l(R,I,'CRNS1',Y)))/1000;
-iamcr('Trd_Sec_Ene_Imp_Hyd_Vol',RG,Y)       =sum(R$M_RG(R,RG),sum(I$sameas(I,'H_H'),ve_l(R,I,'MCHS1',Y)))/1000*2/96*120.1;
 iamcr('Trd_Sec_Ene_Imp_Amm_Vol',RG,Y)       =sum(R$M_RG(R,RG),sum(I$sameas(I,'H_H'),ve_l(R,I,'NH3S1',Y)))/1000;
 
 iamcr('Trd_Prm_Ene_Exp_Coa_Vol',RG,Y)       =sum(R$M_RG(R,RG),sum(I$sameas(I,'COL'),sum(J$sum(R2,M_JX(J,'COLR1',R2)),vserv_l(R,I,J,Y))))/1000;
@@ -199,7 +198,6 @@ iamcr('Trd_Prm_Ene_Exp_Bio_Vol',RG,Y)       =sum(R$M_RG(R,RG),sum(I$sameas(I,'CR
 iamcr('Trd_Prm_Ene_Exp_Oil_Vol',RG,Y)       =sum(R$M_RG(R,RG),sum(I$sameas(I,'OIL'),sum(J$sum(R2,M_JX(J,'CRUR1',R2)),vserv_l(R,I,J,Y))))/1000;
 iamcr('Trd_Sec_Ene_Exp_Liq_Oil_Vol',RG,Y)   =sum(R$M_RG(R,RG),sum(I$sameas(I,'OIL'),sum(J$sum(R2,M_JX(J,'OILR1',R2)),vserv_l(R,I,J,Y))))/1000;
 iamcr('Trd_Sec_Ene_Exp_Liq_Bio_Vol',RG,Y)   =sum(R$M_RG(R,RG),sum(I$sameas(I,'CRN'),sum(J$sum(R2,M_JX(J,'CRNR1',R2)),vserv_l(R,I,J,Y))))/1000;
-iamcr('Trd_Sec_Ene_Exp_Hyd_Vol',RG,Y)       =sum(R$M_RG(R,RG),sum(I$sameas(I,'H_H'),sum(J$sum(R2,M_JX(J,'MCHR1',R2)),vserv_l(R,I,J,Y))))/1000*2/96*120.1;
 iamcr('Trd_Sec_Ene_Exp_Amm_Vol',RG,Y)       =sum(R$M_RG(R,RG),sum(I$sameas(I,'H_H'),sum(J$sum(R2,M_JX(J,'NH3R1',R2)),vserv_l(R,I,J,Y))))/1000;
 
 iamcr('Trd_Prm_Ene_Coa_Vol',RG,Y)           =iamcr('Trd_Prm_Ene_Exp_Coa_Vol',RG,Y)-iamcr('Trd_Prm_Ene_Imp_Coa_Vol',RG,Y);
