@@ -213,11 +213,11 @@ tumx_dec(R,I,L_CAPDEC)$FL_IL(R,I,L_CAPDEC)                                      
 tumx_dec(R,I,L_CAPDEC)$(FL_IL(R,I,L_CAPDEC) and tumx_dec(R,I,L_CAPDEC) le 0)    =eps;
 
 tumx(R,I,ML)$sum(L$M_ML(ML,L),FL_IL(R,I,L))                     =tumx_t(R,I,ML,'%calc_year%');
-tumx(R,I,ML)$sum(L_CAPDEC$M_ML(ML,L_CAPDEC),FL_IL(R,I,L_CAPDEC) and tumx_dec(R,I,L_CAPDEC)) =sum(L_CAPDEC$M_ML(ML,L_CAPDEC),tumx_dec(R,I,L_CAPDEC));
+tumx(R,I,ML)$(sum(L_CAPDEC$M_ML(ML,L_CAPDEC),FL_IL(R,I,L_CAPDEC) and tumx_dec(R,I,L_CAPDEC)) and not tumx(R,I,ML)) =sum(L_CAPDEC$M_ML(ML,L_CAPDEC),tumx_dec(R,I,L_CAPDEC));
 tumn(R,I,ML)$sum(L$M_ML(ML,L),FL_IL(R,I,L))                     =tumn_t(R,I,ML,'%calc_year%');
 
 emtax(MQ,MG)                                                    =emtax_t(MQ,MG,'%calc_year%');
-$if %ndc_cont%==on $ife %calc_year%>2030 $include '%1/inc_prog/ndc_cont.gms'
+$if %ndc_cont%==on emtax('%gas_sector%','%gas_type%')$(%calc_year% gt 2030)=tax_2030;
 $if %keep_carpri%==on emtax('%gas_sector%','%gas_type%')$(%calc_year% gt %cp_const_y%)=cp_const;
 qmax(MQ,MG)                                                     =qmax_t(MQ,MG,'%calc_year%');
 emax_ex(ME,MK)$(K_EXRES(MK) and %calc_year% eq %start_year%)    =emax_t(ME,MK,'%start_year%');
@@ -258,7 +258,7 @@ if(AIMTechnology.modelstat>2,
     year_inf=%calc_year%;
 );
 $if %nonCO2pricing%==on $include '%1/inc_prog/nonCO2FFIpricing.gms'
-
+$if %CPregdiff%==on     $include '%1/inc_prog/cpregdiff.gms'
 
 * output parameters
 

@@ -43,7 +43,6 @@ Parameters
     scp(R,I,L)          'subsidy rate for technology replacement'
     qmax                'emissions constraint'
     emtax(MQ,MG)        'emission tax in 1000US$/t-CO2'
-    emtax_p(MQ,MG)      'emission tax in the previous year'
     gas(R,I,K,M)        'emission factor'
     vsw(R,I,L)          'stock quantity'
     vswr(R,I,L)         'stock + new installation'
@@ -91,6 +90,7 @@ Parameters
     essc(R,I,L,H)       'expected stock quantity remaining in year H'
     tumx_dec(R,I,L)     'upper limit of new installation for device whose stock capacity decreases'
     ssr(R,I,L)          'retired stock'
+    carpri_add(MQ,MG,H) 'additional carbon price in USD/tCO2'
     ve_p(R,I,K)
     vq_p(R,I,M)
     vs_p(R,I,L)
