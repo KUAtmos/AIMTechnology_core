@@ -7,7 +7,7 @@ $ife %calc_year%>2030 $include '%1/inc_prog/ndc_cpdiff.gms'
 
 if(CO2FFIprice gt 0 and v_year('%calc_year%')>2030, 
 
-    emtax(MQ,'CO2FFI')$sum(R,sameas(R,MQ) and emtax_d2030(MQ) and v_year('%calc_year%') le 2050)=CO2FFIprice+emtax_d2030(MQ)*(2050-v_year('%calc_year%'))/(2050-2030);
+    emtax(MQ,'CO2FFI')$sum(R,sameas(R,MQ) and emtax_d2030(MQ) and v_year('%calc_year%') le %CarPriConvYear%)=CO2FFIprice+emtax_d2030(MQ)*(v_year('%CarPriConvYear%')-v_year('%calc_year%'))/(v_year('%CarPriConvYear%')-2030);
     emtax(MQ,'CO2FFI')$(emtax(MQ,'CO2FFI') lt 0)=0;
 
     Solve AIMTechnology minimizing VTC using LP;
