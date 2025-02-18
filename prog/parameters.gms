@@ -44,6 +44,7 @@ Parameters
     qmax                'emissions constraint'
     emtax(MQ,MG)        'emission tax in 1000US$/t-CO2'
     emtax_p(MQ,MG)      'emission tax in the previous year'
+    emtax_d2030(MQ)     'emission tax differences'
     gas(R,I,K,M)        'emission factor'
     vsw(R,I,L)          'stock quantity'
     vswr(R,I,L)         'stock + new installation'

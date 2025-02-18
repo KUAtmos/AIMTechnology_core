@@ -258,7 +258,7 @@ if(AIMTechnology.modelstat>2,
     year_inf=%calc_year%;
 );
 $if %nonCO2pricing%==on $include '%1/inc_prog/nonCO2FFIpricing.gms'
-$if %CPregdiff%==on     $include '%1/inc_prog/cpregdiff.gms'
+$if %CPregdiff%==on     $batinclude '%1/inc_prog/cpregdiff.gms' %1
 
 * output parameters
 

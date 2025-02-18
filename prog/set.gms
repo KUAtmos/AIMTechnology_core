@@ -50,5 +50,5 @@ Set
     FL_LH(R,L,H)            'technology cohort term'
     FL_RP(R,I,L)            'device replacement mapping'
 ;
-Alias (I,I1),(J,J1),(L,L1),(YEAR,YEAR1,YEAR2),(H,H2),(R,R2,R3),(MR,MR2)
+Alias (I,I1),(J,J1),(L,L1),(YEAR,YEAR1,YEAR2),(H,H2),(R,R2,R3),(MR,MR2),(MQ,MQ2)
 ;
