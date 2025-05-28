@@ -259,6 +259,7 @@ if(AIMTechnology.modelstat>2,
 );
 $if %nonCO2pricing%==on $include '%1/inc_prog/nonCO2FFIpricing.gms'
 $if %CPregdiff%==on     $batinclude '%1/inc_prog/cpregdiff.gms' %1
+$if %CP_curpol_ELV2%==on    $batinclude '%1/inc_prog/cpregdiff2.gms' %1
 
 * output parameters
 
