@@ -207,6 +207,11 @@ ssc(R,I,L,H)$(%calc_year% gt %start_year% and FL_IL(R,I,L))     =sc_load(R,I,L,H
 ssr(R,I,L)$FL_RP(R,I,L)                                         =sum(H$(age(H) ge tn(R,L)),ssc(R,I,L,H));
 ssc(R,I,L,H)$(%calc_year% gt %start_year% and FL_IL(R,I,L) and age(H) ge tn(R,L))=0;
 
+$ifthen.weibull %weibull%==on
+beta(L)=3;
+ssc(R,I,L,H)$(%calc_year% gt 2025 and v_year(H) gt 2025 and tn(R,L) gt 1 and age(H) gt 0 and FL_IL(R,I,L) and exp(-1*(age(H)/tn(R,L)**beta(L))) gt 0.001)=sc_load(R,I,L,H)*exp(-1*(age(H)/tn(R,L)**beta(L)))/exp(-1*((age(H)-t_int)/tn(R,L)**beta(L)));
+$endif.weibull
+
 * update maximum installation capacity where maximum stock capacity decreases during the calculation period
 essc(R,I,L_CAPDEC,YEAR)$(FL_IL(R,I,L_CAPDEC) and v_year(YEAR) ge %calc_year%)   =sum(H$(v_year(YEAR)-v_year(H) le tn(R,L_CAPDEC)),ssc(R,I,L_CAPDEC,H));
 tumx_dec(R,I,L_CAPDEC)$FL_IL(R,I,L_CAPDEC)                                      =smin(YEAR$(v_year(YEAR) gt %calc_year% and v_year(YEAR) le %calc_year%+tn(R,L_CAPDEC)),romx_t(R,I,L_CAPDEC,YEAR)-essc(R,I,L_CAPDEC,YEAR))/t_int;
