@@ -54,7 +54,7 @@ EQ_SDC(R,I,J)$FL_NOTINT_J(J)..
 EQ_ENG(R,I,K)$FL_IK(R,I,K)..
     VE(R,I,K) =e= -sum(L,(1+xi(R,I,L,K))*e(R,I,L,K)*VX(R,I,L));
     VE.fx(R,I,K)$(not FL_IK(R,I,K))=0;
-EQ_ESCMX(ME,MK)$(emax(ME,MK) ne inf)..
+EQ_ESCMX(ME,MK)$(emax(ME,MK) AND (emax(ME,MK) ne inf))..
     emax(ME,MK) =g= sum((R,I)$M_ME(R,I,ME),sum(M_MK(MK,K),VE(R,I,K)));
 EQ_ESCMN(ME,MK)$emin(ME,MK)..
     emin(ME,MK) =l= sum((R,I)$M_ME(R,I,ME),sum(M_MK(MK,K),VE(R,I,K)));
